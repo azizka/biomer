@@ -1,10 +1,10 @@
-Package: biomer
+Package: biomes
 Title: Spatial Explicit Biome Maps and Assigning Species to Biomes
 Version: 0.0.0.9001
 Authors@R: 
     person("Alexander", "Zizka", , "alexander.zizka@biologie.uni-marburg.de", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-1680-9192"))
-Description: Contains rasterized global biome maps as provided by Beierkuhnlein & Fischer 2021. TKTK biome schemes are available as terra raster objects, and two convenience functions help to assign geographic records and speceis to biomes. 
+Description: Contains rasterized global biome maps as provided by Fischer, Walentowitz & Beierkuhnlein (2022). TKTK biome schemes are available as terra raster objects, and two convenience functions help to assign geographic records and speceis to biomes. 
 URL: https://github.com/azizka/biomer
 BugReports: https://github.com/azizka/biomer/issues
 License: MIT
@@ -17,3 +17,6 @@ Suggests:
     knitr,
     rmarkdown
 VignetteBuilder: knitr
+Depends: 
+    R (>= 2.10)
+LazyData: true
