@@ -1,0 +1,19 @@
+---
+title: "Data-extraction_and_species_classification"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Data-extraction_and_species_classification}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(biomer)
+```
