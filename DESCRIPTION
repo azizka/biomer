@@ -1,0 +1,22 @@
+Package: biomer
+Title: Tools for Working with Biome Raster Data and Species Distributions
+Version: 0.1.0
+Authors@R: 
+    person("Christian", "Groß", email = "christian.gross@example.com", role = c("aut", "cre"))
+Description: Provides tools to visualize biome raster layers and analyze species
+    occurrence data in relation to these biomes. The package enables downloading 
+    GBIF occurrence records, cleaning coordinate data, and quantifying species 
+    occurrences across user-defined biome layers. Additional functions support 
+    raster visualization, data loading, and summary generation.
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Depends: 
+    R (>= 4.1.0)
+Imports:
+    terra,
+    viridis,
+    dplyr,
+    magrittr,
+    rlang
+License: MIT + file LICENSE
