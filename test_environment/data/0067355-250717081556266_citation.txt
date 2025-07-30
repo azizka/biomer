@@ -1,0 +1,6 @@
+$download
+[1] "GBIF Occurrence Download https://doi.org/10.15468/dl.am8u5m Accessed from R via rgbif (https://github.com/ropensci/rgbif) on 2025-07-29"
+
+$datasets
+NULL
+

@@ -2,7 +2,7 @@ Package: biomer
 Title: Tools for Working with Biome Raster Data and Species Distributions
 Version: 0.1.0
 Authors@R: 
-    person("Christian", "Groß", email = "christian.gross@example.com", role = c("aut", "cre"))
+    person("Christian", "Groß", email = "grossc@uni-marburg.de", role = c("aut", "cre"))
 Description: Provides tools to visualize biome raster layers and analyze species
     occurrence data in relation to these biomes. The package enables downloading 
     GBIF occurrence records, cleaning coordinate data, and quantifying species 
@@ -18,5 +18,11 @@ Imports:
     viridis,
     dplyr,
     magrittr,
-    rlang
+    rlang,
+    readr,
+    rgbif,
+    countrycode,
+    CoordinateCleaner,
+    tidyr,
+    stringr
 License: MIT + file LICENSE

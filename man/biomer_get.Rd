@@ -8,10 +8,6 @@ biomer_get(env = .GlobalEnv)
 }
 \arguments{
 \item{env}{The environment into which the objects should be loaded. Defaults to \code{.GlobalEnv}.}
-
-\item{path_legend}{Path to the biome legend RDS file.}
-
-\item{path_raster}{Path to the biome raster stack file (GeoTIFF).}
 }
 \value{
 NULL (objects are assigned in the environment)

@@ -1,3 +1,5 @@
 ^biomer\.Rproj$
 ^\.Rproj\.user$
 ^LICENSE\.md$
+^test_environment$
+
