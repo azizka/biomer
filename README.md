@@ -1,7 +1,7 @@
-![biomer logo](https://raw.githubusercontent.com/azizka/biomer/main/inst/extdata/biomer_logo.png)
+<img src="https://raw.githubusercontent.com/azizka/biomer/main/inst/extdata/biomer_logo.png" width="300"/>
 
 
-# biomes
+# biomer
 Distribute spatially explicit biome definitions and link species occurrences with biomes
 
 # How to use
