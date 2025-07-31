@@ -1,3 +1,6 @@
+![biomer logo](https://raw.githubusercontent.com/azizka/biomer/main/inst/extdata/biomer_logo.png)
+
+
 # biomes
 Distribute spatially explicit biome definitions and link species occurrences with biomes
 
