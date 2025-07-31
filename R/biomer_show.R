@@ -10,7 +10,15 @@
 #' @param save Logical; whether to save the plot(s) as PNG file(s).
 #' @param save_path Directory path to save plots. Required if `save = TRUE`.
 #' @return NULL (plots are shown or saved as a side effect)
+#'
+#' @examples
+#' biomer_show(layer_name = c(1, 2, 3, 20, 31),
+#'             show = TRUE,
+#'             save = TRUE,
+#'             save_path = "test_environment/plots")
+#'
 #' @export
+#'
 #' @importFrom dplyr select starts_with
 #' @importFrom dplyr filter
 #' @importFrom magrittr %>%

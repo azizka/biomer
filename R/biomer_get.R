@@ -4,6 +4,11 @@
 #'
 #' @param env The environment into which the objects should be loaded. Defaults to `.GlobalEnv`.
 #' @return NULL (objects are assigned in the environment)
+#'
+#' @examples
+#' biomer_get()
+#' head(biome_legend)
+#'
 #' @export
 
 biomer_get <- function(env = .GlobalEnv) {

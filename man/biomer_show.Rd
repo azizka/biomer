@@ -33,3 +33,10 @@ NULL (plots are shown or saved as a side effect)
 Visualizes one or more biome layers from a raster stack using custom color scales and a legend.
 Azonal categories (e.g., urban, water, mountains) are shown in separate colors.
 }
+\examples{
+biomer_show(layer_name = c(1, 2, 3, 20, 31),
+            show = TRUE,
+            save = TRUE,
+            save_path = "test_environment/plots")
+
+}

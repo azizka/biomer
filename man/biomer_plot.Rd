@@ -25,11 +25,20 @@ biomer_plot(
 
 \item{raster_path}{Path to the biome raster stack. Default: internal package path.}
 
-\item{save_path}{Optional folder path to save plots. PNGs will be auto-named.}
+\item{save_path}{Optional folder path to save plots.}
 
-\item{show}{Logical. Show plots in the R viewer? Default: TRUE.}
+\item{show}{Logical. Show plots in the R viewer. Default: TRUE.}
 }
 \description{
 This function visualizes the absolute number of species occurrence records per raster cell
 over a biome raster layer. It uses precomputed biome polygons (.gpkg files) for fast plotting.
+}
+\examples{
+biomer_plot(data,
+            lon_col = "decimalLongitude",
+            lat_col = "decimalLatitude",
+            biome_layer = c(1, 5, 20),
+            show = TRUE,
+            save_path = "test_environment/plots"
+            )
 }

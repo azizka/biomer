@@ -1,4 +1,4 @@
-#' Download and clean GBIF occurrences for a taxon (species, genus, family, etc.)
+#' Download and clean GBIF occurrences for a taxon
 #'
 #' Downloads GBIF occurrence data using the GBIF API, filters by year range,
 #' limits number of records, applies coordinate cleaning, and stores citation.
@@ -13,7 +13,18 @@
 #' @param year_min Optional integer. Minimum year to include.
 #' @param year_max Optional integer. Maximum year to include.
 #'
-#' @return A tibble with (optionally cleaned) GBIF occurrence records.
+#' @return A table with (optionally cleaned) GBIF occurrence records.
+#'
+#' @examples
+#' data <- biomer_GBIF(taxon = "Solemyida",
+#'                     username = "XXX",
+#'                     pwd = "XXX",
+#'                     email = "XXX",
+#'                     save_dir = "test_environment/data",
+#'                     filter_Sclean = TRUE,
+#'                     filter_sea = FALSE,
+#'                     year_min = 2000,
+#'                     year_max = 2024)
 #' @export
 #'
 #' @importFrom rgbif name_backbone occ_download occ_download_wait occ_download_get occ_download_import pred pred_gte pred_lte gbif_citation

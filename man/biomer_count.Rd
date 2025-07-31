@@ -2,7 +2,7 @@
 % Please edit documentation in R/biomer_count.R
 \name{biomer_count}
 \alias{biomer_count}
-\title{Annotate species records with biome information from a raster layer}
+\title{Occurrence records by biome}
 \usage{
 biomer_count(
   df,
@@ -18,7 +18,7 @@ biomer_count(
 )
 }
 \arguments{
-\item{df}{Data frame with at least longitude and latitude columns.}
+\item{df}{Data frame with at least longitude, latitude and taxon columns.}
 
 \item{species_col}{Column name for species (or other grouping).}
 
@@ -37,9 +37,18 @@ biomer_count(
 \item{include_summary}{Logical; whether to generate and export a summary table.}
 }
 \value{
-NULL (adds two objects: \if{html}{\out{<input>}}_biom and summary_table)
+Adds two tables: df_biom and summary_table
 }
 \description{
 Adds biome ID, cell ID and biome name for each point from the selected biome layer.
 Also creates a summary table of occurrences per species and biome.
+}
+\examples{
+biomer_count(df = data,
+             species_col = "species",
+             biome_layer = 1,
+             lon_col = "decimalLongitude",
+             lat_col = "decimalLatitude",
+             include_summary = TRUE,
+             save_path = NULL)
 }

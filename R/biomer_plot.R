@@ -8,12 +8,23 @@
 #' @param lat_col Column name for latitude. Default: "decimalLatitude".
 #' @param biome_layer Integer or vector. Index(es) of the biome raster layer(s).
 #' @param raster_path Path to the biome raster stack. Default: internal package path.
-#' @param save_path Optional folder path to save plots. PNGs will be auto-named.
-#' @param show Logical. Show plots in the R viewer? Default: TRUE.
+#' @param save_path Optional folder path to save plots.
+#' @param show Logical. Show plots in the R viewer. Default: TRUE.
+#'
+#' @examples
+#' biomer_plot(data,
+#'             lon_col = "decimalLongitude",
+#'             lat_col = "decimalLatitude",
+#'             biome_layer = c(1, 5, 20),
+#'             show = TRUE,
+#'             save_path = "test_environment/plots"
+#'             )
+#' @export
+#'
 #'
 #' @import terra
 #' @import viridis
-#' @export
+#'
 biomer_plot <- function(data,
                         lon_col = "decimalLongitude",
                         lat_col = "decimalLatitude",
@@ -44,27 +55,27 @@ biomer_plot <- function(data,
 
     biome_polys <- terra::vect(polygon_path)
 
-    # Punktdaten vorbereiten
+    # Prepare point data
     points_wgs <- terra::vect(data, geom = c(lon_col, lat_col), crs = "EPSG:4326")
     points_proj <- terra::project(points_wgs, terra::crs(r_biome))
 
-    # Zellenzuweisung und Zählung
+    # Cell allocation and counting
     cell_ids <- terra::cellFromXY(r_biome, terra::crds(points_proj))
     valid <- !is.na(cell_ids)
     cell_ids <- cell_ids[valid]
     cell_counts <- table(cell_ids)
 
-    # Raster mit Zählungen
+    # Grid with count
     r_count <- r_biome
     values(r_count) <- 0
     values(r_count)[as.integer(names(cell_counts))] <- as.integer(cell_counts)
     r_count[r_count == 0] <- NA
 
-    # Raster zu Polygonen
+    # Grid to Polygon
     polys_counts <- terra::as.polygons(r_count, dissolve = FALSE)
     names(polys_counts) <- "count"
 
-    # Farben
+    # colors
     biome_ids <- sort(unique(biome_polys$biome_id))
     biome_cols <- viridis(length(biome_ids))
     biome_col_map <- setNames(biome_cols, biome_ids)
@@ -74,7 +85,7 @@ biomer_plot <- function(data,
     col_vals <- cut(log1p(polys_counts$count), breaks = 100, labels = FALSE)
     col_map <- reds[col_vals]
 
-    # PNG export
+    # PNG export and plotting
     plot_file <- if (!is.null(save_path)) {
       file.path(save_path, paste0("layer_", layer, ".png"))
     } else {

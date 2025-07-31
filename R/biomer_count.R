@@ -1,9 +1,9 @@
-#' Annotate species records with biome information from a raster layer
+#'  Occurrence records by biome
 #'
 #' Adds biome ID, cell ID and biome name for each point from the selected biome layer.
 #' Also creates a summary table of occurrences per species and biome.
 #'
-#' @param df Data frame with at least longitude and latitude columns.
+#' @param df Data frame with at least longitude, latitude and taxon columns.
 #' @param species_col Column name for species (or other grouping).
 #' @param lon_col Name of longitude column. Default: "decimalLongitude"
 #' @param lat_col Name of latitude column. Default: "decimalLatitude"
@@ -13,7 +13,16 @@
 #' @param save_path Path to export CSVs (without extension). If NULL, nothing is saved.
 #' @param include_summary Logical; whether to generate and export a summary table.
 #'
-#' @return NULL (adds two objects: <input>_biom and summary_table)
+#' @return Adds two tables: df_biom and summary_table
+#'
+#' @examples
+#' biomer_count(df = data,
+#'              species_col = "species",
+#'              biome_layer = 1,
+#'              lon_col = "decimalLongitude",
+#'              lat_col = "decimalLatitude",
+#'              include_summary = TRUE,
+#'              save_path = NULL)
 #' @export
 #'
 #' @importFrom terra rast crs vect project extract cellFromXY

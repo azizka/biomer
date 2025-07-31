@@ -2,7 +2,7 @@
 % Please edit documentation in R/biomer_GBIF.R
 \name{biomer_GBIF}
 \alias{biomer_GBIF}
-\title{Download and clean GBIF occurrences for a taxon (species, genus, family, etc.)}
+\title{Download and clean GBIF occurrences for a taxon}
 \usage{
 biomer_GBIF(
   taxon,
@@ -36,9 +36,20 @@ biomer_GBIF(
 \item{year_max}{Optional integer. Maximum year to include.}
 }
 \value{
-A tibble with (optionally cleaned) GBIF occurrence records.
+A table with (optionally cleaned) GBIF occurrence records.
 }
 \description{
 Downloads GBIF occurrence data using the GBIF API, filters by year range,
 limits number of records, applies coordinate cleaning, and stores citation.
+}
+\examples{
+data <- biomer_GBIF(taxon = "Solemyida",
+                    username = "XXX",
+                    pwd = "XXX",
+                    email = "XXX",
+                    save_dir = "test_environment/data",
+                    filter_Sclean = TRUE,
+                    filter_sea = FALSE,
+                    year_min = 2000,
+                    year_max = 2024)
 }

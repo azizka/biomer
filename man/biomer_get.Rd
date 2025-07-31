@@ -15,3 +15,8 @@ NULL (objects are assigned in the environment)
 \description{
 Loads the raster stack and associated biome legend into the global environment for use in further analysis.
 }
+\examples{
+biomer_get()
+head(biome_legend)
+
+}
