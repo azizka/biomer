@@ -1,12 +1,17 @@
 # biomes
 
-**biomes** ships raster layers of 31 commonly used biome definitions
-(from Fischer et al. 2022) at 10 × 10 km resolution globally, together
-with convenience functions for biogeographic analyses: classify species
-occurrences into biomes, rank the biome layers for a given dataset,
-tabulate the result, and draw a publication-style map, all the way up to
-a single-call wrapper that turns a taxon name into a finished table and
-map.
+ships raster layers of 31 commonly-used biome definitions (from Fischer
+et al. 2022) at 10 × 10 km resolution globally, together with
+convenience functions for biogeographic analyses:
+
+- classify species occurrences into biomes,
+- rank the suitability of biome layers for a given dataset,
+- tabulate the result
+- draw a publication-style map
+- 
+
+*biomes* includes a single-call wrapper that turns a taxon name into a
+finished table and map.
 
 ------------------------------------------------------------------------
 
@@ -20,21 +25,20 @@ library(biomes)
 ```
 
 `biomes` depends on the [terra](https://rspatial.github.io/terra/)
-package and attaches it for you, so
-[`plot()`](https://rspatial.github.io/terra/reference/plot.html) on a
-biome layer works directly. Optional features (mapping, GBIF download,
-coordinate cleaning) use packages declared in `Suggests`; install them
-on demand: `ggplot2`, `sf`, `viridis`, `tidyterra`, `cowplot`, `ggforce`
-(mapping), `rgbif`, `CoordinateCleaner` (GBIF download).
+package. Optional features (mapping, GBIF download, coordinate cleaning)
+use packages declared in `Suggests`; install them on demand: `ggplot2`,
+`sf`, `viridis`, `tidyterra`, `cowplot`, `ggforce` (mapping), `rgbif`,
+`CoordinateCleaner` (GBIF download).
 
 ------------------------------------------------------------------------
 
 ## TL;DR: the one-call workflow
 
 [`biomes_full()`](https://azizka.github.io/biomes/reference/biomes_full.md)
-runs the whole pipeline in a single call. Give it an occurrence data
-frame (or a taxon name) and it picks the best biome layer, classifies
-the records, tabulates them, and builds a map:
+is a wrapper around athe species-to-biome classificatoin pipeline,
+provided with an occurrence data frame (or a taxon name) it picks the
+best biome layer, classifies all occurrence records, tabulates them, and
+shows a map:
 
 ``` r
 
@@ -45,7 +49,7 @@ data(biomes_example)
 res <- biomes_full(x = biomes_example)   # layer = "best" is the default
 
 res            # short summary print
-res$layer      # which layer was picked
+res$layer      # identity of the selected layer
 res$ranking    # full ranking table
 res$table      # occurrences per biome on the chosen layer
 res$map        # ggplot map
@@ -53,21 +57,14 @@ print(res$map)
 ```
 
 [`biomes_full()`](https://azizka.github.io/biomes/reference/biomes_full.md)
-chooses the best biome layer automatically (`layer = "best"`, the
-default, runs
-[`biomes_rank()`](https://azizka.github.io/biomes/reference/biomes_rank.md)
-internally) or uses a fixed one (`layer = 1`, …, `layer = 31`). It
-returns its result invisibly; set `show = TRUE` to also print the map
-and table.
+by default chooses the best biome layer, alternatively a specific layer
+can be selected with the “layer” argument (`layer = 1`, …,
+`layer = 31`).
 
 ``` r
 
 biomes_full(x = biomes_example, layer = 31)   # fixed layer
 ```
-
-You can also start from a scientific name instead of a data frame; see
-[Optional: occurrences from GBIF](#optional-occurrences-from-gbif)
-below.
 
 The same pipeline as individual building blocks (sections 1 to 5):
 
@@ -103,7 +100,7 @@ data(biomes_information)
 biomes_information[1, ]
 ```
 
-For a human-readable summary of one or more biome schemes:
+For a human-readable summary of the biome information:
 
 ``` r
 
@@ -118,9 +115,8 @@ biomes_info()               # info for all 31 layers
 
 [`biomes_classify()`](https://azizka.github.io/biomes/reference/biomes_classify.md)
 takes a data frame of points (or an `sf` / `SpatVector`) and returns the
-**input data with the biome assignment appended on the right**. Pick the
-layer by index (`1:31`); no need to handle `SpatRaster` objects
-yourself. Records that fall outside every biome polygon are labelled
+**input data with the biome assignment appended**. Pick the layer by
+index (`1:31`). Records that fall outside all biome polygon are labelled
 `"no_biome"` so they are never silently dropped.
 
 ``` r
@@ -165,7 +161,7 @@ best_id
 head(r)
 ```
 
-Diagnostic plots for the ranking:
+Diagnostic plots:
 
 ``` r
 
@@ -176,15 +172,11 @@ biomes_show_rank(r, type = "criteria")    # heatmap of all criteria
 
 ### Rank within a scheme type
 
-The 31 definitions follow very different methodologies (climate-based,
+The 31 definitions follow different methodologies (climate-based,
 vegetation/DGVM, remote-sensing land cover, ecoregion, integrative
-climate-vegetation, and anthropogenic land use), recorded in the
-`scheme_type` column of `biomes_information`. Comparing across types can
-be misleading: for widely distributed datasets, fine-grained,
-full-coverage schemes (e.g. anthropogenic land-use maps) tend to win on
-the data-driven criteria. Use the `scheme_type` argument to rank only
-within a conceptually comparable group; the output then contains just
-the layers of that type:
+climate-vegetation, and anthropogenic land use). Comparison across types
+can be misleading, therefore use the `scheme_type` argument to rank only
+within a conceptually homogenous group.
 
 ``` r
 
@@ -214,14 +206,7 @@ biomes_example |>
 
 [`biomes_tab()`](https://azizka.github.io/biomes/reference/biomes_tab.md)
 counts **occurrence records** (one row of the input = one occurrence)
-per biome and layer, returning a long table with one row per (layer,
-biome) pair. Because
-[`biomes_classify()`](https://azizka.github.io/biomes/reference/biomes_classify.md)
-labels off-polygon points as `"no_biome"` by default, every record is
-counted (set `na = NA` in
-[`biomes_classify()`](https://azizka.github.io/biomes/reference/biomes_classify.md)
-to drop them instead). It also handles multi-layer classifications in
-one go:
+per biome and layer, returning one row per (layer, biome) pair.
 
 ``` r
 
@@ -237,11 +222,7 @@ To count unique species per biome rather than records, deduplicate by
 ## 5. Visualize
 
 [`biomes_visualise()`](https://azizka.github.io/biomes/reference/biomes_visualise.md)
-draws an occurrence map over a chosen biome layer: the layer is rendered
-as a categorical raster, occurrence points are overlaid in red, and the
-per-biome record counts are appended to the legend labels (so they match
-[`biomes_tab()`](https://azizka.github.io/biomes/reference/biomes_tab.md)
-exactly).
+draws an occurrence map over a chosen biome layer.
 
 ``` r
 
@@ -259,9 +240,9 @@ p <- biomes_visualise(biomes_example, layer = 1)
 ggplot2::ggsave("map_layer_01.jpg", p, width = 13, height = 8, dpi = 600)
 ```
 
-The optional pie inset is **off by default** (`pie = FALSE`); set
-`pie = TRUE` to add it. Use `legend = FALSE` to drop the colour legend
-for clean publication figures.
+Use `pie = TRUE` to add a pie chart on the record number per biome. Use
+`legend = FALSE` to drop the colour legend for clean publication
+figures.
 
 ------------------------------------------------------------------------
 
@@ -290,15 +271,11 @@ res$table
 print(res$map)
 ```
 
-This GBIF path is a convenience add-on; the core of the package is the
-classify, rank, tabulate and visualize workflow above, which works on
-any occurrence dataset.
-
 ------------------------------------------------------------------------
 
 ## Vignettes
 
-Three vignettes walk through the package step by step:
+Three vignettes go into more detail:
 
 1.  [Biome layers and occurrence
     data](https://azizka.github.io/biomes/articles/biome-data.html):
@@ -313,7 +290,7 @@ Three vignettes walk through the package step by step:
     [`biomes_full()`](https://azizka.github.io/biomes/reference/biomes_full.md)
     call.
 
-From an R session they are also available offline:
+Also available via:
 
 ``` r
 
@@ -325,15 +302,15 @@ vignette("biome-data", package = "biomes")
 
 Please cite these two references when using the `biomes` package:
 
-1.  Fischer J-C, Walentowitz A, Beierkuhnlein C (2022) The biome
+1.  Groß H, Zizka A (2025): biomes: Analysis of Taxon Distributions in
+    Global Biomes. R package, Version 0.9.
+    <https://github.com/azizka/biomes>. Cite this for the R package.
+
+2.  Fischer J-C, Walentowitz A, Beierkuhnlein C (2022) The biome
     inventory: Standardizing global biogeographical units. *Global
     Ecology and Biogeography* 31(11): 2172-2183.
     <https://doi.org/10.1111/geb.13574> Cite this for the compilation of
     the biome layers.
-
-2.  Groß H, Zizka A (2025): biomes: Analysis of Taxon Distributions in
-    Global Biomes. R package, Version 0.9.
-    <https://github.com/azizka/biomes>. Cite this for the R package.
 
 ``` r
 

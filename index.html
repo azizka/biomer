@@ -59,7 +59,16 @@
 </h1></div>
 <!-- badges: start -->
 
-<p><strong>biomes</strong> ships raster layers of 31 commonly used biome definitions (from Fischer et al. 2022) at 10 × 10 km resolution globally, together with convenience functions for biogeographic analyses: classify species occurrences into biomes, rank the biome layers for a given dataset, tabulate the result, and draw a publication-style map, all the way up to a single-call wrapper that turns a taxon name into a finished table and map.</p>
+<p>ships raster layers of 31 commonly-used biome definitions (from Fischer et al. 2022) at 10 × 10 km resolution globally, together with convenience functions for biogeographic analyses:</p>
+<ul>
+<li>classify species occurrences into biomes,</li>
+<li>rank the suitability of biome layers for a given dataset,</li>
+<li>tabulate the result</li>
+<li>draw a publication-style map</li>
+<li>
+</li>
+</ul>
+<p><em>biomes</em> includes a single-call wrapper that turns a taxon name into a finished table and map.</p>
 <hr>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -68,13 +77,13 @@
 <code class="sourceCode R"><span><span class="co"># install.packages("devtools")</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"azizka/biomes"</span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">biomes</span><span class="op">)</span></span></code></pre></div>
-<p><code>biomes</code> depends on the <a href="https://rspatial.github.io/terra/" class="external-link">terra</a> package and attaches it for you, so <code><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot()</a></code> on a biome layer works directly. Optional features (mapping, GBIF download, coordinate cleaning) use packages declared in <code>Suggests</code>; install them on demand: <code>ggplot2</code>, <code>sf</code>, <code>viridis</code>, <code>tidyterra</code>, <code>cowplot</code>, <code>ggforce</code> (mapping), <code>rgbif</code>, <code>CoordinateCleaner</code> (GBIF download).</p>
+<p><code>biomes</code> depends on the <a href="https://rspatial.github.io/terra/" class="external-link">terra</a> package. Optional features (mapping, GBIF download, coordinate cleaning) use packages declared in <code>Suggests</code>; install them on demand: <code>ggplot2</code>, <code>sf</code>, <code>viridis</code>, <code>tidyterra</code>, <code>cowplot</code>, <code>ggforce</code> (mapping), <code>rgbif</code>, <code>CoordinateCleaner</code> (GBIF download).</p>
 <hr>
 </div>
 <div class="section level2">
 <h2 id="tldr-the-one-call-workflow">TL;DR: the one-call workflow<a class="anchor" aria-label="anchor" href="#tldr-the-one-call-workflow"></a>
 </h2>
-<p><code><a href="reference/biomes_full.html">biomes_full()</a></code> runs the whole pipeline in a single call. Give it an occurrence data frame (or a taxon name) and it picks the best biome layer, classifies the records, tabulates them, and builds a map:</p>
+<p><code><a href="reference/biomes_full.html">biomes_full()</a></code> is a wrapper around athe species-to-biome classificatoin pipeline, provided with an occurrence data frame (or a taxon name) it picks the best biome layer, classifies all occurrence records, tabulates them, and shows a map:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">biomes</span><span class="op">)</span></span>
 <span></span>
@@ -83,15 +92,14 @@
 <span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/biomes_full.html">biomes_full</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">biomes_example</span><span class="op">)</span>   <span class="co"># layer = "best" is the default</span></span>
 <span></span>
 <span><span class="va">res</span>            <span class="co"># short summary print</span></span>
-<span><span class="va">res</span><span class="op">$</span><span class="va">layer</span>      <span class="co"># which layer was picked</span></span>
+<span><span class="va">res</span><span class="op">$</span><span class="va">layer</span>      <span class="co"># identity of the selected layer</span></span>
 <span><span class="va">res</span><span class="op">$</span><span class="va">ranking</span>    <span class="co"># full ranking table</span></span>
 <span><span class="va">res</span><span class="op">$</span><span class="va">table</span>      <span class="co"># occurrences per biome on the chosen layer</span></span>
 <span><span class="va">res</span><span class="op">$</span><span class="va">map</span>        <span class="co"># ggplot map</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">res</span><span class="op">$</span><span class="va">map</span><span class="op">)</span></span></code></pre></div>
-<p><code><a href="reference/biomes_full.html">biomes_full()</a></code> chooses the best biome layer automatically (<code>layer = "best"</code>, the default, runs <code><a href="reference/biomes_rank.html">biomes_rank()</a></code> internally) or uses a fixed one (<code>layer = 1</code>, …, <code>layer = 31</code>). It returns its result invisibly; set <code>show = TRUE</code> to also print the map and table.</p>
+<p><code><a href="reference/biomes_full.html">biomes_full()</a></code> by default chooses the best biome layer, alternatively a specific layer can be selected with the “layer” argument (<code>layer = 1</code>, …, <code>layer = 31</code>).</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/biomes_full.html">biomes_full</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">biomes_example</span>, layer <span class="op">=</span> <span class="fl">31</span><span class="op">)</span>   <span class="co"># fixed layer</span></span></code></pre></div>
-<p>You can also start from a scientific name instead of a data frame; see <a href="#optional-occurrences-from-gbif">Optional: occurrences from GBIF</a> below.</p>
 <p>The same pipeline as individual building blocks (sections 1 to 5):</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ranking</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/biomes_rank.html">biomes_rank</a></span><span class="op">(</span><span class="va">biomes_example</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
@@ -115,7 +123,7 @@
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">biomes_information</span><span class="op">)</span></span>
 <span><span class="va">biomes_information</span><span class="op">[</span><span class="fl">1</span>, <span class="op">]</span></span></code></pre></div>
-<p>For a human-readable summary of one or more biome schemes:</p>
+<p>For a human-readable summary of the biome information:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/biomes_info.html">biomes_info</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>              <span class="co"># info for layer 1</span></span>
 <span><span class="fu"><a href="reference/biomes_info.html">biomes_info</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">14</span>, <span class="fl">21</span><span class="op">)</span><span class="op">)</span>   <span class="co"># info for several layers</span></span>
@@ -125,7 +133,7 @@
 <div class="section level2">
 <h2 id="id_2-classify-occurrences-into-biomes">2. Classify occurrences into biomes<a class="anchor" aria-label="anchor" href="#id_2-classify-occurrences-into-biomes"></a>
 </h2>
-<p><code><a href="reference/biomes_classify.html">biomes_classify()</a></code> takes a data frame of points (or an <code>sf</code> / <code>SpatVector</code>) and returns the <strong>input data with the biome assignment appended on the right</strong>. Pick the layer by index (<code>1:31</code>); no need to handle <code>SpatRaster</code> objects yourself. Records that fall outside every biome polygon are labelled <code>"no_biome"</code> so they are never silently dropped.</p>
+<p><code><a href="reference/biomes_classify.html">biomes_classify()</a></code> takes a data frame of points (or an <code>sf</code> / <code>SpatVector</code>) and returns the <strong>input data with the biome assignment appended</strong>. Pick the layer by index (<code>1:31</code>). Records that fall outside all biome polygon are labelled <code>"no_biome"</code> so they are never silently dropped.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">biomes_example</span><span class="op">)</span></span>
 <span></span>
@@ -157,7 +165,7 @@
 <span><span class="va">best_id</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">r</span>, <span class="st">"best_layer"</span><span class="op">)</span></span>
 <span><span class="va">best_id</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">r</span><span class="op">)</span></span></code></pre></div>
-<p>Diagnostic plots for the ranking:</p>
+<p>Diagnostic plots:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/biomes_show_rank.html">biomes_show_rank</a></span><span class="op">(</span><span class="va">r</span>, type <span class="op">=</span> <span class="st">"composite"</span><span class="op">)</span>   <span class="co"># composite score bar plot</span></span>
 <span><span class="fu"><a href="reference/biomes_show_rank.html">biomes_show_rank</a></span><span class="op">(</span><span class="va">r</span>, type <span class="op">=</span> <span class="st">"na"</span><span class="op">)</span>          <span class="co"># % unclassified per layer</span></span>
@@ -165,7 +173,7 @@
 <div class="section level3">
 <h3 id="rank-within-a-scheme-type">Rank within a scheme type<a class="anchor" aria-label="anchor" href="#rank-within-a-scheme-type"></a>
 </h3>
-<p>The 31 definitions follow very different methodologies (climate-based, vegetation/DGVM, remote-sensing land cover, ecoregion, integrative climate-vegetation, and anthropogenic land use), recorded in the <code>scheme_type</code> column of <code>biomes_information</code>. Comparing across types can be misleading: for widely distributed datasets, fine-grained, full-coverage schemes (e.g. anthropogenic land-use maps) tend to win on the data-driven criteria. Use the <code>scheme_type</code> argument to rank only within a conceptually comparable group; the output then contains just the layers of that type:</p>
+<p>The 31 definitions follow different methodologies (climate-based, vegetation/DGVM, remote-sensing land cover, ecoregion, integrative climate-vegetation, and anthropogenic land use). Comparison across types can be misleading, therefore use the <code>scheme_type</code> argument to rank only within a conceptually homogenous group.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># rank only the vegetation / potential-natural-vegetation layers</span></span>
 <span><span class="va">r_veg</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/biomes_rank.html">biomes_rank</a></span><span class="op">(</span><span class="va">biomes_example</span>, scheme_type <span class="op">=</span> <span class="st">"vegetation"</span><span class="op">)</span></span>
@@ -185,7 +193,7 @@
 <span><span class="va">biomes_example</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="reference/biomes_classify.html">biomes_classify</a></span><span class="op">(</span>layer <span class="op">=</span> <span class="va">best_id</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="reference/biomes_tab.html">biomes_tab</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><code><a href="reference/biomes_tab.html">biomes_tab()</a></code> counts <strong>occurrence records</strong> (one row of the input = one occurrence) per biome and layer, returning a long table with one row per (layer, biome) pair. Because <code><a href="reference/biomes_classify.html">biomes_classify()</a></code> labels off-polygon points as <code>"no_biome"</code> by default, every record is counted (set <code>na = NA</code> in <code><a href="reference/biomes_classify.html">biomes_classify()</a></code> to drop them instead). It also handles multi-layer classifications in one go:</p>
+<p><code><a href="reference/biomes_tab.html">biomes_tab()</a></code> counts <strong>occurrence records</strong> (one row of the input = one occurrence) per biome and layer, returning one row per (layer, biome) pair.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/biomes_classify.html">biomes_classify</a></span><span class="op">(</span><span class="va">biomes_example</span>, layer <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">25</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="reference/biomes_tab.html">biomes_tab</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
@@ -195,7 +203,7 @@
 <div class="section level2">
 <h2 id="id_5-visualize">5. Visualize<a class="anchor" aria-label="anchor" href="#id_5-visualize"></a>
 </h2>
-<p><code><a href="reference/biomes_visualise.html">biomes_visualise()</a></code> draws an occurrence map over a chosen biome layer: the layer is rendered as a categorical raster, occurrence points are overlaid in red, and the per-biome record counts are appended to the legend labels (so they match <code><a href="reference/biomes_tab.html">biomes_tab()</a></code> exactly).</p>
+<p><code><a href="reference/biomes_visualise.html">biomes_visualise()</a></code> draws an occurrence map over a chosen biome layer.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># map for the best layer (legend on, no pie inset)</span></span>
 <span><span class="fu"><a href="reference/biomes_visualise.html">biomes_visualise</a></span><span class="op">(</span><span class="va">biomes_example</span>, layer <span class="op">=</span> <span class="va">best_id</span><span class="op">)</span></span>
@@ -209,7 +217,7 @@
 <span><span class="co"># save to disk</span></span>
 <span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/biomes_visualise.html">biomes_visualise</a></span><span class="op">(</span><span class="va">biomes_example</span>, layer <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsave.html" class="external-link">ggsave</a></span><span class="op">(</span><span class="st">"map_layer_01.jpg"</span>, <span class="va">p</span>, width <span class="op">=</span> <span class="fl">13</span>, height <span class="op">=</span> <span class="fl">8</span>, dpi <span class="op">=</span> <span class="fl">600</span><span class="op">)</span></span></code></pre></div>
-<p>The optional pie inset is <strong>off by default</strong> (<code>pie = FALSE</code>); set <code>pie = TRUE</code> to add it. Use <code>legend = FALSE</code> to drop the colour legend for clean publication figures.</p>
+<p>Use <code>pie = TRUE</code> to add a pie chart on the record number per biome. Use <code>legend = FALSE</code> to drop the colour legend for clean publication figures.</p>
 <hr>
 </div>
 <div class="section level2">
@@ -223,13 +231,12 @@
 <code class="sourceCode R"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/biomes_full.html">biomes_full</a></span><span class="op">(</span>taxon <span class="op">=</span> <span class="st">"Fagus sylvatica"</span><span class="op">)</span></span>
 <span><span class="va">res</span><span class="op">$</span><span class="va">table</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">res</span><span class="op">$</span><span class="va">map</span><span class="op">)</span></span></code></pre></div>
-<p>This GBIF path is a convenience add-on; the core of the package is the classify, rank, tabulate and visualize workflow above, which works on any occurrence dataset.</p>
 <hr>
 </div>
 <div class="section level2">
 <h2 id="vignettes">Vignettes<a class="anchor" aria-label="anchor" href="#vignettes"></a>
 </h2>
-<p>Three vignettes walk through the package step by step:</p>
+<p>Three vignettes go into more detail:</p>
 <ol style="list-style-type: decimal">
 <li>
 <a href="https://azizka.github.io/biomes/articles/biome-data.html">Biome layers and occurrence data</a>: load the layers, inspect their metadata, get occurrences, and rank the layers for your data.</li>
@@ -238,7 +245,7 @@
 <li>
 <a href="https://azizka.github.io/biomes/articles/one-call-workflow.html">The one-call workflow</a>: do all of the above in a single <code><a href="reference/biomes_full.html">biomes_full()</a></code> call.</li>
 </ol>
-<p>From an R session they are also available offline:</p>
+<p>Also available via:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/browseVignettes.html" class="external-link">browseVignettes</a></span><span class="op">(</span><span class="st">"biomes"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette</a></span><span class="op">(</span><span class="st">"biome-data"</span>, package <span class="op">=</span> <span class="st">"biomes"</span><span class="op">)</span></span></code></pre></div>
@@ -248,8 +255,8 @@
 </h2>
 <p>Please cite these two references when using the <code>biomes</code> package:</p>
 <ol style="list-style-type: decimal">
-<li><p>Fischer J-C, Walentowitz A, Beierkuhnlein C (2022) The biome inventory: Standardizing global biogeographical units. <em>Global Ecology and Biogeography</em> 31(11): 2172-2183. <a href="https://doi.org/10.1111/geb.13574" class="external-link uri">https://doi.org/10.1111/geb.13574</a> Cite this for the compilation of the biome layers.</p></li>
 <li><p>Groß H, Zizka A (2025): biomes: Analysis of Taxon Distributions in Global Biomes. R package, Version 0.9. <a href="https://github.com/azizka/biomes" class="external-link uri">https://github.com/azizka/biomes</a>. Cite this for the R package.</p></li>
+<li><p>Fischer J-C, Walentowitz A, Beierkuhnlein C (2022) The biome inventory: Standardizing global biogeographical units. <em>Global Ecology and Biogeography</em> 31(11): 2172-2183. <a href="https://doi.org/10.1111/geb.13574" class="external-link uri">https://doi.org/10.1111/geb.13574</a> Cite this for the compilation of the biome layers.</p></li>
 </ol>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/citation.html" class="external-link">citation</a></span><span class="op">(</span><span class="st">"biomes"</span><span class="op">)</span></span></code></pre></div>
