@@ -8,7 +8,6 @@ convenience functions for biogeographic analyses:
 - rank the suitability of biome layers for a given dataset,
 - tabulate the result
 - draw a publication-style map
-- 
 
 *biomes* includes a single-call wrapper that turns a taxon name into a
 finished table and map.
@@ -163,25 +162,25 @@ scores all 31 layers on three data-driven criteria and proposes the
 layer with the highest equally-weighted **composite score** as the best
 one for your dataset:
 
-- **coverage** — share of your occurrence records that fall onto a
+- **coverage**: Share of your occurrence records that fall onto a
   defined biome class in the layer
   (`non-NA assignments / total records`). Layers where many of your
   records are unclassified score low.
-- **effective number of classes** — `exp(H')`, the Hill number of order
-  1 derived from the Shannon entropy `H'` of the biome assignments. It
-  is the *effective* number of biome classes your records distribute
+- **effective number of classes**: `exp(H')`, the Hill number of order 1
+  derived from the Shannon entropy `H'` of the biome assignments. It is
+  the *effective* number of biome classes your records distribute
   across: a layer where records are spread evenly across many classes
   scores higher than one where most records pile into a single class.
   This rewards layers that are informative for your particular dataset.
-- **granularity** — number of biome classes actually used by your
-  records divided by the total number of classes the layer offers.
-  Measures how much of a layer’s resolution your data actually exercise.
+- **granularity**: Number of biome classes actually used by your records
+  divided by the total number of classes the layer offers. Measures how
+  much of a layer’s resolution your data actually exercise.
 
 All three are min-max scaled to `[0, 1]` across the layers being ranked
 and averaged into the `composite_score`; the layer with the highest
 score is flagged `is_best = TRUE` and reported in
 `attr(ranking, "best_layer")`. Ties are broken by publication year (more
-recent wins) by default — see
+recent wins) by default, see
 [`?biomes_rank`](https://azizka.github.io/biomes/reference/biomes_rank.md)
 for the `tiebreaker` argument and the two additional optional criteria
 (`informativeness`, `agreement`).

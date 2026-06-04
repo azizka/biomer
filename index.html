@@ -65,8 +65,6 @@
 <li>rank the suitability of biome layers for a given dataset,</li>
 <li>tabulate the result</li>
 <li>draw a publication-style map</li>
-<li>
-</li>
 </ul>
 <p><em>biomes</em> includes a single-call wrapper that turns a taxon name into a finished table and map.</p>
 <hr>
@@ -162,13 +160,13 @@
 <p><code><a href="reference/biomes_rank.html">biomes_rank()</a></code> scores all 31 layers on three data-driven criteria and proposes the layer with the highest equally-weighted <strong>composite score</strong> as the best one for your dataset:</p>
 <ul>
 <li>
-<strong>coverage</strong> — share of your occurrence records that fall onto a defined biome class in the layer (<code>non-NA assignments / total records</code>). Layers where many of your records are unclassified score low.</li>
+<strong>coverage</strong>: Share of your occurrence records that fall onto a defined biome class in the layer (<code>non-NA assignments / total records</code>). Layers where many of your records are unclassified score low.</li>
 <li>
-<strong>effective number of classes</strong> — <code>exp(H')</code>, the Hill number of order 1 derived from the Shannon entropy <code>H'</code> of the biome assignments. It is the <em>effective</em> number of biome classes your records distribute across: a layer where records are spread evenly across many classes scores higher than one where most records pile into a single class. This rewards layers that are informative for your particular dataset.</li>
+<strong>effective number of classes</strong>: <code>exp(H')</code>, the Hill number of order 1 derived from the Shannon entropy <code>H'</code> of the biome assignments. It is the <em>effective</em> number of biome classes your records distribute across: a layer where records are spread evenly across many classes scores higher than one where most records pile into a single class. This rewards layers that are informative for your particular dataset.</li>
 <li>
-<strong>granularity</strong> — number of biome classes actually used by your records divided by the total number of classes the layer offers. Measures how much of a layer’s resolution your data actually exercise.</li>
+<strong>granularity</strong>: Number of biome classes actually used by your records divided by the total number of classes the layer offers. Measures how much of a layer’s resolution your data actually exercise.</li>
 </ul>
-<p>All three are min-max scaled to <code>[0, 1]</code> across the layers being ranked and averaged into the <code>composite_score</code>; the layer with the highest score is flagged <code>is_best = TRUE</code> and reported in <code>attr(ranking, "best_layer")</code>. Ties are broken by publication year (more recent wins) by default — see <code><a href="reference/biomes_rank.html">?biomes_rank</a></code> for the <code>tiebreaker</code> argument and the two additional optional criteria (<code>informativeness</code>, <code>agreement</code>).</p>
+<p>All three are min-max scaled to <code>[0, 1]</code> across the layers being ranked and averaged into the <code>composite_score</code>; the layer with the highest score is flagged <code>is_best = TRUE</code> and reported in <code>attr(ranking, "best_layer")</code>. Ties are broken by publication year (more recent wins) by default, see <code><a href="reference/biomes_rank.html">?biomes_rank</a></code> for the <code>tiebreaker</code> argument and the two additional optional criteria (<code>informativeness</code>, <code>agreement</code>).</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">r</span>       <span class="op">&lt;-</span> <span class="fu"><a href="reference/biomes_rank.html">biomes_rank</a></span><span class="op">(</span><span class="va">biomes_example</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="va">best_id</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">r</span>, <span class="st">"best_layer"</span><span class="op">)</span></span>
