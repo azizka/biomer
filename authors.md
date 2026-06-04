@@ -9,11 +9,11 @@
 ## Citation
 
 Groß H, Zizka A (2026). *biomes: User-Friendly Species-to-Biome
-Classification*. R package version 0.9.1.
+Classification*. R package version 0.9.2.
 
     @Manual{,
       title = {biomes: User-Friendly Species-to-Biome Classification},
       author = {Hans Christian Groß and Alexander Zizka},
       year = {2026},
-      note = {R package version 0.9.1},
+      note = {R package version 0.9.2},
     }

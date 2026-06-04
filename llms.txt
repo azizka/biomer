@@ -25,20 +25,25 @@ library(biomes)
 ```
 
 `biomes` depends on the [terra](https://rspatial.github.io/terra/)
-package. Optional features (mapping, GBIF download, coordinate cleaning)
-use packages declared in `Suggests`; install them on demand: `ggplot2`,
-`sf`, `viridis`, `tidyterra`, `cowplot`, `ggforce` (mapping), `rgbif`,
-`CoordinateCleaner` (GBIF download).
+package and installs `ggplot2`, `sf`, `viridis` and `tidyterra`
+automatically so the full classification + mapping workflow works out of
+the box. The optional pie-chart inset, the GBIF download path and
+coordinate cleaning live in `Suggests` and can be installed on demand:
+`cowplot`, `ggforce` (pie inset), `rgbif`, `CoordinateCleaner` (GBIF
+download).
 
 ------------------------------------------------------------------------
 
 ## TL;DR: the one-call workflow
 
 [`biomes_full()`](https://azizka.github.io/biomes/reference/biomes_full.md)
-is a wrapper around athe species-to-biome classificatoin pipeline,
-provided with an occurrence data frame (or a taxon name) it picks the
-best biome layer, classifies all occurrence records, tabulates them, and
-shows a map:
+is a wrapper around the species-to-biome classification pipeline.
+Provided with an occurrence data frame (or a taxon name) it picks the
+**best biome layer** for that dataset (= the layer with the highest
+composite score from
+[`biomes_rank()`](https://azizka.github.io/biomes/reference/biomes_rank.md);
+see section 3 for the criteria), classifies all occurrence records,
+tabulates them, and shows a map:
 
 ``` r
 
@@ -56,10 +61,14 @@ res$map        # ggplot map
 print(res$map)
 ```
 
+With `layer = "best"` (the default),
 [`biomes_full()`](https://azizka.github.io/biomes/reference/biomes_full.md)
-by default chooses the best biome layer, alternatively a specific layer
-can be selected with the “layer” argument (`layer = 1`, …,
-`layer = 31`).
+runs
+[`biomes_rank()`](https://azizka.github.io/biomes/reference/biomes_rank.md)
+internally and picks the layer with the highest `composite_score` (see
+section 3 below for how that score is built). Alternatively a specific
+layer can be selected with the `layer` argument (`layer = 1`, …,
+`layer = 31`):
 
 ``` r
 
@@ -150,8 +159,32 @@ to get both.
 ## 3. Pick the best layer for your data
 
 [`biomes_rank()`](https://azizka.github.io/biomes/reference/biomes_rank.md)
-scores all 31 layers on coverage, effective number of classes and
-granularity, and proposes a single best layer:
+scores all 31 layers on three data-driven criteria and proposes the
+layer with the highest equally-weighted **composite score** as the best
+one for your dataset:
+
+- **coverage** — share of your occurrence records that fall onto a
+  defined biome class in the layer
+  (`non-NA assignments / total records`). Layers where many of your
+  records are unclassified score low.
+- **effective number of classes** — `exp(H')`, the Hill number of order
+  1 derived from the Shannon entropy `H'` of the biome assignments. It
+  is the *effective* number of biome classes your records distribute
+  across: a layer where records are spread evenly across many classes
+  scores higher than one where most records pile into a single class.
+  This rewards layers that are informative for your particular dataset.
+- **granularity** — number of biome classes actually used by your
+  records divided by the total number of classes the layer offers.
+  Measures how much of a layer’s resolution your data actually exercise.
+
+All three are min-max scaled to `[0, 1]` across the layers being ranked
+and averaged into the `composite_score`; the layer with the highest
+score is flagged `is_best = TRUE` and reported in
+`attr(ranking, "best_layer")`. Ties are broken by publication year (more
+recent wins) by default — see
+[`?biomes_rank`](https://azizka.github.io/biomes/reference/biomes_rank.md)
+for the `tiebreaker` argument and the two additional optional criteria
+(`informativeness`, `agreement`).
 
 ``` r
 
