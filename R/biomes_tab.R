@@ -26,18 +26,18 @@
 #'   x     = biomes_example,
 #'   value = "name"
 #' )
-#' biomes_biome_tab(classified_names, value = "names")
+#' biomes_tab(classified_names, value = "names")
 #'
 #' # Tabulate by raster value
 #' classified_ids <- biomes_classify(
 #'   x     = biomes_example,
 #'   value = "ID"
 #' )
-#' biomes_biome_tab(classified_ids, value = "ID")
+#' biomes_tab(classified_ids, value = "ID")
 #'
 #' @export
-biomes_biome_tab <- function(x,
-                             value = "names") {
+biomes_tab <- function(x,
+                       value = "names") {
 
   # Assertions
   checkmate::assert_data_frame(x, min.rows = 1)

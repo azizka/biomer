@@ -5,11 +5,16 @@
 [![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
 <!-- badges: end -->
 
-**biomes** provides raster layers of 31 commonly used biome definitions
-(from Fischer et al, 2022) at 10 × 10 km resolution globally, plus
-convenience functions for biogeographic analyses: classify
-user-provided species occurrences into biomes, summarize them and
-visualize.
+ships raster layers of 31 commonly-used biome definitions
+(from Fischer et al. 2022) at 10 × 10 km resolution globally, together
+with convenience functions for biogeographic analyses:
+
+* classify species occurrences into biomes,
+* rank the suitability of biome layers for a given dataset,
+* tabulate the result
+* draw a publication-style map
+
+*biomes* includes a single-call wrapper that turns a taxon name into a finished table and map.
 
 ---
 
@@ -21,12 +26,63 @@ devtools::install_github("azizka/biomes")
 library(biomes)
 ```
 
-`biomes` depends on the [terra](https://rspatial.github.io/terra/) package
-and attaches it for you, so `plot()` on a biome layer works directly.
+`biomes` depends on the [terra](https://rspatial.github.io/terra/)
+package and installs `ggplot2`, `sf`, `viridis` and `tidyterra`
+automatically so the full classification + mapping workflow works out of
+the box. The optional pie-chart inset, the GBIF download path and
+coordinate cleaning live in `Suggests` and can be installed on demand:
+`cowplot`, `ggforce` (pie inset), `rgbif`, `CoordinateCleaner` (GBIF
+download).
 
 ---
 
-## 1. Load the biome layers and example dataset
+## TL;DR: the one-call workflow
+
+`biomes_full()` is a wrapper around the species-to-biome classification
+pipeline. Provided with an occurrence data frame (or a taxon name) it picks
+the **best biome layer** for that dataset (= the layer with the highest
+composite score from `biomes_rank()`; see section 3 for the criteria),
+classifies all occurrence records, tabulates them, and shows a map:
+
+```r
+library(biomes)
+
+data(biomes_example)
+
+res <- biomes_full(x = biomes_example)   # layer = "best" is the default
+
+res            # short summary print
+res$layer      # identity of the selected layer
+res$ranking    # full ranking table
+res$table      # occurrences per biome on the chosen layer
+res$map        # ggplot map
+print(res$map)
+```
+
+With `layer = "best"` (the default), `biomes_full()` runs `biomes_rank()`
+internally and picks the layer with the highest `composite_score` (see
+section 3 below for how that score is built). Alternatively a specific
+layer can be selected with the `layer` argument (`layer = 1`, …,
+`layer = 31`):
+
+```r
+biomes_full(x = biomes_example, layer = 31)   # fixed layer
+```
+
+The same pipeline as individual building blocks (sections 1 to 5):
+
+```r
+ranking <- biomes_rank(biomes_example, verbose = FALSE)
+best_id <- attr(ranking, "best_layer")
+
+occ <- biomes_classify(biomes_example, layer = best_id)
+biomes_tab(occ)
+biomes_visualise(biomes_example, layer = best_id)
+```
+
+---
+
+## 1. Load the biome layers and metadata
 
 ```r
 library(biomes)
@@ -36,16 +92,15 @@ layers[[1]]              # first biome layer
 plot(layers[[1]])        # quick look (terra is attached by biomes)
 ```
 
-The matching metadata is available as the `biomes_information` data
-frame — one row per layer, in the same order as the raster stack:
+The matching metadata sits in `biomes_information`, one row per layer,
+in the same order as the raster stack:
 
 ```r
 data(biomes_information)
 biomes_information[1, ]
 ```
 
-For a human-readable summary of one or more biome schemes, use
-`biomes_info()`:
+For a human-readable summary of the biome information:
 
 ```r
 biomes_info(1)              # info for layer 1
@@ -55,81 +110,211 @@ biomes_info()               # info for all 31 layers
 
 ---
 
-## 2. Classify occurrence records into biomes
+## 2. Classify occurrences into biomes
 
 `biomes_classify()` takes a data frame of points (or an `sf` /
-`SpatVector` of points) and returns one biome assignment per record.
-By default it classifies against all 31 layers shipped with the package.
+`SpatVector`) and returns the **input data with the biome assignment
+appended**. Pick the layer by index (`1:31`). Records that fall outside all
+biome polygon are labelled `"no_biome"` so they are never silently
+dropped.
 
 ```r
 data(biomes_example)
 
-# Default: classify against all 31 layers and return biome names
-biomes_classify(x = biomes_example)
+# Default: append the biome-name column for the chosen layer
+biomes_example_class <- biomes_classify(biomes_example, layer = 1)
+head(biomes_example_class)   # original cols + Biome_Inventory_layer_01_name
+table(biomes_example_class$Biome_Inventory_layer_01_name, useNA = "ifany")
+
+# Two layers at once
+biomes_classify(biomes_example, layer = c(1, 25))
+
+# Return only the classification columns
+biomes_classify(biomes_example, layer = 1, append = FALSE)
+
+# Keep NA for off-polygon points instead of the "no_biome" label
+biomes_classify(biomes_example, layer = 1, na = NA)
+
+# Escape hatch for custom rasters: pass a SpatRaster via `biome`
+# biomes_classify(my_occ, biome = my_custom_raster)
 ```
 
-You can restrict the classification to specific layers:
+Appended columns are named after the input layers with the suffixes
+`_value` (raster value) and `_name` (biome name); use `value = "both"`
+to get both.
+
+---
+
+## 3. Pick the best layer for your data
+
+`biomes_rank()` scores all 31 layers on three data-driven criteria and
+proposes the layer with the highest equally-weighted **composite score**
+as the best one for your dataset:
+
+* **coverage**: Share of your occurrence records that fall onto a
+  defined biome class in the layer (`non-NA assignments / total
+  records`). Layers where many of your records are unclassified score
+  low.
+* **effective number of classes**: `exp(H')`, the Hill number of order 1
+  derived from the Shannon entropy `H'` of the biome assignments. It is
+  the *effective* number of biome classes your records distribute
+  across: a layer where records are spread evenly across many classes
+  scores higher than one where most records pile into a single class.
+  This rewards layers that are informative for your particular dataset.
+* **granularity**: Number of biome classes actually used by your
+  records divided by the total number of classes the layer offers.
+  Measures how much of a layer's resolution your data actually exercise.
+
+All three are min-max scaled to `[0, 1]` across the layers being ranked
+and averaged into the `composite_score`; the layer with the highest
+score is flagged `is_best = TRUE` and reported in
+`attr(ranking, "best_layer")`. Ties are broken by publication year (more
+recent wins) by default, see `?biomes_rank` for the `tiebreaker`
+argument and the two additional optional criteria (`informativeness`,
+`agreement`).
 
 ```r
-layers <- biomes_get()
-
-biomes_classify(
-  x     = biomes_example,
-  biome = layers[[c(1, 25)]]
-)
+r       <- biomes_rank(biomes_example, verbose = FALSE)
+best_id <- attr(r, "best_layer")
+best_id
+head(r)
 ```
 
-You can also display the raster value (the raw biome ID) instead of the
-biome name, and customize the coordinate column names:
+Diagnostic plots:
 
 ```r
-biomes_classify(
-  x     = biomes_example,
-  biome = layers[[1]],
-  lon   = "decimalLongitude",
-  lat   = "decimalLatitude",
-  value = "ID"   # "name" (default), "ID", or "both"
-)
+biomes_show_rank(r, type = "composite")   # composite score bar plot
+biomes_show_rank(r, type = "na")          # % unclassified per layer
+biomes_show_rank(r, type = "criteria")    # heatmap of all criteria
 ```
 
-The output columns are named after the input layers with the suffixes
-`_value` (raster value) and `_name` (biome name).
+### Rank within a scheme type
 
-## 3. Tabulate occurrences per biome
+The 31 definitions follow different methodologies (climate-based,
+vegetation/DGVM, remote-sensing land cover, ecoregion, integrative
+climate-vegetation, and anthropogenic land use). Comparison across types can
+be misleading, therefore use the `scheme_type` argument to rank only
+within a conceptually homogenous group.
+
+```r
+# rank only the vegetation / potential-natural-vegetation layers
+r_veg <- biomes_rank(biomes_example, scheme_type = "vegetation")
+attr(r_veg, "best_layer")
+
+table(biomes_information$scheme_type)   # how many layers per type
+```
+
+`scheme_type = "all"` (the default) ranks all 31 layers, i.e. the
+behaviour above. Other values are `"climate"`, `"vegetation"`,
+`"land_cover"`, `"ecoregion"`, `"integrative"` and `"anthropogenic"`.
+
+---
+
+## 4. Tabulate occurrences per biome
 
 ```r
 library(dplyr)
 
 biomes_example |>
-  biomes_classify() |>
-  biomes_biome_tab()
+  biomes_classify(layer = best_id) |>
+  biomes_tab()
 ```
 
-This counts **occurrence records** (one row of the input = one
-occurrence) per biome and layer. To count unique species per biome,
-deduplicate by `species` before tabulating.
+`biomes_tab()` counts **occurrence records** (one row of the input =
+one occurrence) per biome and layer, returning one
+row per (layer, biome) pair.
 
-## 4. Articles
+```r
+biomes_classify(biomes_example, layer = c(1, 25)) |>
+  biomes_tab()
+```
 
-Three companion articles illustrate how to use the package:
+To count unique species per biome rather than records, deduplicate by
+`species` before tabulating.
 
-1. [Count the number of species per biome](https://azizka.github.io/biomes/articles/species_number_per_biome.html)
-2. [Create publication-level maps of a dataset over a biome](https://azizka.github.io/biomes/articles/publicaiton_level_map.html)
-3. [Compare two or more biome definitions for a given occurrence dataset](https://azizka.github.io/biomes/articles/compare_biome_definitions.html)
+---
+
+## 5. Visualize
+
+`biomes_visualise()` draws an occurrence map over a chosen biome layer.
+
+```r
+# map for the best layer (legend on, no pie inset)
+biomes_visualise(biomes_example, layer = best_id)
+
+# any specific layer
+biomes_visualise(biomes_example, layer = 1)
+
+# add the pie inset showing the share of records per biome
+biomes_visualise(biomes_example, layer = 1, pie = TRUE)
+
+# save to disk
+p <- biomes_visualise(biomes_example, layer = 1)
+ggplot2::ggsave("map_layer_01.jpg", p, width = 13, height = 8, dpi = 600)
+```
+
+Use `pie = TRUE` to add a pie chart on the record number per biome.
+Use `legend = FALSE` to drop the colour legend
+for clean publication figures.
+
+---
+
+## Optional: occurrences from GBIF
+
+If you do not already have an occurrence dataset, `biomes_occ()` can
+fetch one from GBIF for a taxon (species, genus, family, …) and run
+basic coordinate cleaning. It asks GBIF how many records exist and, for
+up to 100,000, downloads them via `occ_search()` (no login). Larger
+queries prompt you to either cap at 100,000 or switch to
+`occ_download()` (GBIF credentials, returns a citable DOI).
+
+```r
+occ <- biomes_occ(taxon = "Fagus sylvatica")
+```
+
+`biomes_full()` wires this in for you, so a taxon name is enough for the
+full workflow:
+
+```r
+res <- biomes_full(taxon = "Fagus sylvatica")
+res$table
+print(res$map)
+```
+---
+
+## Vignettes
+
+Three vignettes go into more detail:
+
+1. [Biome layers and occurrence data](https://azizka.github.io/biomes/articles/biome-data.html):
+   load the layers, inspect their metadata, get occurrences, and rank
+   the layers for your data.
+2. [Classify, summarize and map](https://azizka.github.io/biomes/articles/classify-summarize-map.html):
+   assign occurrences to biomes, tabulate them, and draw a map.
+3. [The one-call workflow](https://azizka.github.io/biomes/articles/one-call-workflow.html):
+   do all of the above in a single `biomes_full()` call.
+
+Also available via:
+
+```r
+browseVignettes("biomes")
+vignette("biome-data", package = "biomes")
+```
 
 ## Citation
 
 Please cite these two references when using the `biomes` package:
 
-1. Fischer J-C, Walentowitz A, Beierkuhnlein C (2022) The biome
-   inventory — Standardizing global biogeographical units.
-   *Global Ecology and Biogeography* 31(11): 2172–2183.
-   <https://doi.org/10.1111/geb.13574>
-   — for the compilation of the biome layers.
-
-2. Groß H, Zizka A (2025): biomes: Analysis of Taxon Distributions in
+1. Groß H, Zizka A (2025): biomes: Analysis of Taxon Distributions in
    Global Biomes. R package, Version 0.9.
-   <https://github.com/azizka/biomes> — for the R package.
+   <https://github.com/azizka/biomes>. Cite this for the R package.
+
+2. Fischer J-C, Walentowitz A, Beierkuhnlein C (2022) The biome
+   inventory: Standardizing global biogeographical units.
+   *Global Ecology and Biogeography* 31(11): 2172-2183.
+   <https://doi.org/10.1111/geb.13574>
+   Cite this for the compilation of the biome layers.
+
 
 ```r
 citation("biomes")

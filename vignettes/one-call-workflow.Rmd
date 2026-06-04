@@ -1,0 +1,145 @@
+---
+title: "3. The one-call workflow with biomes_full()"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{3. The one-call workflow with biomes_full()}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+# Cap BLAS / OpenMP threads to 1 for the vignette build.
+# Reason: on Windows with R >= 4.6 the bundled OpenBLAS occasionally fails
+# with "Memory allocation still failed after 10 retries" during vignette
+# re-building when multiple threads try to allocate matrix memory in
+# parallel (triggered here by the raster extracts behind biomes_classify()
+# and the pairwise kappa loop in biomes_rank()). The error is
+# non-deterministic, so the cap is applied in every vignette. Forcing a
+# single thread avoids the contention without changing any numerical
+# result.
+Sys.setenv(OPENBLAS_NUM_THREADS = "1")
+Sys.setenv(OMP_NUM_THREADS      = "1")
+
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment  = "#>"
+)
+library(biomes)
+```
+
+# Goal
+
+The first two vignettes ran the workflow step by step:
+
+1. [Biome layers and occurrence data](biome-data.html): load layers,
+   get occurrences, rank the layers.
+2. [Classify, summarize and map](classify-summarize-map.html):
+   classify, tabulate, visualize.
+
+`biomes_full()` chains all of those steps into a **single call**. Give
+it an occurrence dataset (or a taxon name) and it picks a layer,
+classifies the records, tabulates them, and builds a map, returning
+everything in one object.
+
+---
+
+# 1. From an occurrence dataset
+
+The simplest entry point: pass a data frame as `x`. With the default
+`layer = "best"`, `biomes_full()` runs `biomes_rank()` internally and
+uses the top-ranked layer.
+
+```{r, eval = FALSE}
+data(biomes_example)
+
+res <- biomes_full(x = biomes_example)   # layer = "best" (default)
+res
+```
+
+```
+#> <biomes_full result>
+#>   occurrences : 29104 records
+#>   layer       : 16
+#>   picked by   : biomes_rank() (composite = 0.986)
+#>   table rows  : 20 (biomes used)
+#> Components: $occ, $layer, $ranking, $classified, $table, $map
+```
+
+The result is a `biomes_full` object, really just a list with named
+components you can pull apart:
+
+```{r, eval = FALSE}
+res$layer       # which layer biomes_rank() picked
+res$ranking     # the full ranking table (NULL when layer is fixed)
+res$classified  # the occurrences with the biome column appended
+res$table       # occurrences per biome on the chosen layer
+res$occ         # the occurrence data that went in
+res$map         # the ggplot / cowplot map
+print(res$map)
+```
+
+To use a fixed layer instead of ranking, pass an integer in `1:31`:
+
+```{r, eval = FALSE}
+biomes_full(x = biomes_example, layer = 31)
+```
+
+`biomes_full()` returns its result **invisibly** and does not print
+anything by default. Set `show = TRUE` to also print the map and table
+as a side effect:
+
+```{r, eval = FALSE}
+biomes_full(x = biomes_example, layer = 1, show = TRUE)
+```
+
+> **Note:** the map produced by `biomes_full()` follows the
+> `biomes_visualise()` default, so it has **no pie inset**. If you want
+> one, build the map yourself with
+> `biomes_visualise(..., pie = TRUE)` (see vignette 2).
+
+---
+
+# 2. From a taxon name
+
+Instead of `x`, pass a scientific name as `taxon`. `biomes_full()` then
+calls `biomes_occ()` to download and clean GBIF occurrences first, and
+proceeds exactly as above. This needs a network connection (and the
+`rgbif` / `CoordinateCleaner` packages), so it is not run here:
+
+```{r, eval = FALSE}
+res <- biomes_full(taxon = "Fagus sylvatica")
+res$table
+print(res$map)
+
+# multiple taxa, fixed layer
+biomes_full(taxon = c("Suricata suricatta", "Mustela lutreola"), layer = 1)
+```
+
+Extra arguments are forwarded to `biomes_occ()`, e.g. `year_min`,
+`year_max`, `limit`, `use_download`, or GBIF credentials:
+
+```{r, eval = FALSE}
+biomes_full(taxon = "Fagus sylvatica", year_min = 2000)
+```
+
+Provide **either** `x` **or** `taxon`, never both.
+
+---
+
+# 3. How it maps onto the building blocks
+
+`biomes_full(x = data, layer = "best")` is equivalent to:
+
+```{r, eval = FALSE}
+ranking <- biomes_rank(data, verbose = FALSE)        # vignette 1
+best_id <- attr(ranking, "best_layer")
+
+classified <- biomes_classify(data, layer = best_id) # vignette 2
+tab        <- biomes_tab(classified)                 # vignette 2
+map        <- biomes_visualise(data, layer = best_id)# vignette 2
+```
+
+Use `biomes_full()` when you want the standard pipeline with one call;
+reach for the individual functions when you need to tweak a step, e.g. a
+different ranking criterion, custom classification columns, or a map
+with the pie inset or without the legend.

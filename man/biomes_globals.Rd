@@ -7,13 +7,14 @@
 \alias{biomes_globals}
 \title{Internal package setup for biomes}
 \description{
-Provides raster layers of 31 commonly used biome definitions (from Fischer et al, 2022) at 10x10 km resolutino globally. Furthermore contains two functions to classify species occurrences and species into these biomes and visualize. Works with user-provided occurrences or a species name, in which case occurrences are downloaded from www.gbif.org and cleaned automatically.
+Provides raster layers of 31 commonly used biome definitions (from Fischer et al, 2022) at 10x10 km resolution globally. Furthermore contains two functions to classify species occurrences and species into these biomes and visualize. Works with user-provided occurrences or a species name, in which case occurrences are downloaded from www.gbif.org and cleaned automatically.
 }
 \author{
-\strong{Maintainer}: Hans Christian Groß \email{grossc@uni-marburg.de}
+\strong{Maintainer}: Hans Christian Groß \email{hc1gross@googlemail.com}
 
 Authors:
 \itemize{
+  \item Hans Christian Groß \email{hc1gross@googlemail.com}
   \item Alexander Zizka \email{alexander.zizka@biologie.uni-marburg.de} [funder]
 }
 

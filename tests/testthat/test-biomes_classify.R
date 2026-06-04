@@ -6,7 +6,7 @@ make_df <- function() {
   )
 }
 
-test_that("biomes_classify returns one row per record (single layer, value='name')", {
+test_that("biomes_classify appends one _name column per layer (value='name')", {
   df     <- make_df()
   layers <- biomes_get()
 
@@ -15,6 +15,22 @@ test_that("biomes_classify returns one row per record (single layer, value='name
   ))
 
   expect_s3_class(out, "data.frame")
+  expect_equal(nrow(out), nrow(df))
+  # default append = TRUE: original columns kept + one appended column
+  expect_equal(ncol(out), ncol(df) + 1)
+  expect_true(all(names(df) %in% names(out)))
+  expect_match(names(out)[ncol(out)], "_name$")
+})
+
+test_that("biomes_classify with append=FALSE returns only classification columns", {
+  df     <- make_df()
+  layers <- biomes_get()
+
+  out <- suppressWarnings(suppressMessages(
+    biomes_classify(x = df, biome = layers[[1]], value = "name",
+                    append = FALSE)
+  ))
+
   expect_equal(nrow(out), nrow(df))
   expect_equal(ncol(out), 1)
   expect_match(names(out)[1], "_name$")
@@ -25,7 +41,8 @@ test_that("biomes_classify with value='ID' returns *_value columns", {
   layers <- biomes_get()
 
   out <- suppressWarnings(suppressMessages(
-    biomes_classify(x = df, biome = layers[[c(1, 2)]], value = "ID")
+    biomes_classify(x = df, biome = layers[[c(1, 2)]], value = "ID",
+                    append = FALSE)
   ))
 
   expect_equal(nrow(out), nrow(df))
@@ -38,7 +55,8 @@ test_that("biomes_classify with value='both' interleaves _value and _name", {
   layers <- biomes_get()
 
   out <- suppressWarnings(suppressMessages(
-    biomes_classify(x = df, biome = layers[[c(1, 2)]], value = "both")
+    biomes_classify(x = df, biome = layers[[c(1, 2)]], value = "both",
+                    append = FALSE)
   ))
 
   expect_equal(ncol(out), 4)
@@ -53,7 +71,8 @@ test_that("biomes_classify replaces unknown azonal values with a fallback name",
   layers <- biomes_get()
 
   out <- suppressWarnings(suppressMessages(
-    biomes_classify(x = df, biome = layers[[1:3]], value = "name")
+    biomes_classify(x = df, biome = layers[[1:3]], value = "name",
+                    append = FALSE)
   ))
 
   # No NA in name columns: azonal classes fall back to a placeholder

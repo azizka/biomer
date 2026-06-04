@@ -5,7 +5,7 @@
 \alias{biomes_information}
 \title{Metadata for the 31 biome classifications}
 \format{
-A data frame with 31 rows and 11 columns:
+A data frame with 31 rows and 12 columns:
 \describe{
 \item{publication}{Original publication of the biome classification.}
 \item{name_of_classification}{Full name of the classification scheme.}
@@ -25,6 +25,11 @@ in percent.}
 (e.g. raster, shapefile).}
 \item{source}{URL or citation of the original data source.}
 \item{access_date}{Date on which the original data source was accessed.}
+\item{scheme_type}{Methodological group the classification belongs to,
+one of \code{"climate"}, \code{"vegetation"}, \code{"land_cover"}, \code{"ecoregion"},
+\code{"integrative"} (combined climate-vegetation schemes), or
+\code{"anthropogenic"}. Used by \code{\link[=biomes_rank]{biomes_rank()}} to rank layers within a
+conceptually comparable group.}
 }
 }
 \source{

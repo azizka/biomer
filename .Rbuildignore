@@ -1,18 +1,15 @@
-^biomer\.Rproj$
 ^biomes\.Rproj$
 ^\.Rproj\.user$
 ^LICENSE\.md$
 
-^doc$
 ^Meta$
 ^cran-comments\.md$
 ^test_script\.R$
 ^\.test_.*\.R$
 ^\.rename_cols\.R$
 ^data-raw$
-^vignettes/articles$
 ^_pkgdown\.yml$
-^docs$
 ^pkgdown$
-^test_environment$
 ^\.github$
+^\.positai$
+^\.claude$

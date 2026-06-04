@@ -1,38 +1,43 @@
 Package: biomes
 Title: User-Friendly Species-to-Biome Classification
-Version: 0.9.1
-Authors@R: 
-    c(person("Hans Christian", "Groß", email = "grossc@uni-marburg.de", role = c("cre", "aut")),
+Version: 0.9.2
+Authors@R:
+    c(person("Hans Christian", "Groß", email = "hc1gross@googlemail.com", role = c("cre", "aut")),
         person("Alexander", "Zizka", email = "alexander.zizka@biologie.uni-marburg.de", role = c("aut", "fnd")))
 Description: Provides raster layers of 31 commonly used biome definitions (from Fischer et al, 2022)
- at 10x10 km resolutino globally. Furthermore contains two functions to classify species occurrences
- and species into these biomes and visualize. 
- Works with user-provided occurrences or a species name, in which case occurrences 
+ at 10x10 km resolution globally. Furthermore contains two functions to classify species occurrences
+ and species into these biomes and visualize.
+ Works with user-provided occurrences or a species name, in which case occurrences
  are downloaded from www.gbif.org and cleaned automatically.
-Date: 2025-11-20
+Date: 2026-06-04
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 8.0.0
 Depends:
     R (>= 4.1.0),
     terra
 Imports:
     readr,
-    checkmate
+    checkmate,
+    rlang,
+    ggplot2,
+    sf,
+    viridis,
+    tidyterra
 VignetteBuilder: knitr
 Suggests:
     knitr,
-    readxl,
     rmarkdown,
     testthat (>= 3.0.0),
     dplyr,
     tidyr,
-    ggplot2,
-    sf,
-    viridis,
-    tidyterra,
-    vegan
+    rgbif,
+    CoordinateCleaner,
+    cowplot,
+    ggforce,
+    rstudioapi
 Config/testthat/edition: 3
 License: CC BY 4.0
 LazyData: true
 Config/Needs/website: rmarkdown
+Config/roxygen2/version: 8.0.0

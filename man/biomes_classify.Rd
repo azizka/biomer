@@ -6,10 +6,13 @@
 \usage{
 biomes_classify(
   x,
+  layer = NULL,
   biome = NULL,
   lon = "decimalLongitude",
   lat = "decimalLatitude",
   value = "name",
+  append = TRUE,
+  na = "no_biome",
   raster_file = NULL
 )
 }
@@ -17,8 +20,14 @@ biomes_classify(
 \item{x}{A data frame (with longitude and latitude columns), an \code{sf}
 spatial object, or a \code{terra::SpatVector} of point geometries.}
 
-\item{biome}{A \code{terra::SpatRaster} with one or more biome layers. If
-\code{NULL} (the default), the 31 layers shipped with the package are used.}
+\item{layer}{Integer vector in \code{1:31} selecting one or more layers
+from the packaged biome stack (e.g. \code{layer = 1} or
+\code{layer = c(1, 25)}). Ignored when \code{biome} is supplied. Defaults to
+\code{NULL}, meaning \emph{all} 31 layers.}
+
+\item{biome}{Optional \code{terra::SpatRaster} with one or more biome
+layers. Use this for custom rasters; for the packaged stack prefer
+\verb{layer = <int>}.}
 
 \item{lon}{Column name of longitude in \code{x} (only used if \code{x} is a
 non-spatial data frame). Default: "decimalLongitude".}
@@ -30,15 +39,29 @@ non-spatial data frame). Default: "decimalLatitude".}
 whether the returned data frame contains the raw raster value
 (\code{"ID"}), the biome name (\code{"name"}), or both (\code{"both"}).}
 
+\item{append}{Logical. If \code{TRUE} (default), the classification columns
+are appended to the input \code{x}. If \code{FALSE}, only the classification
+columns are returned (one column per layer for \code{"ID"} / \code{"name"},
+two columns per layer for \code{"both"}).}
+
+\item{na}{Character or \code{NA}. Label used for records that fall outside
+every biome polygon (\code{NA} in the raw extraction) in the \verb{_name}
+columns. Defaults to \code{"no_biome"}, so such records are counted by
+\code{\link[=biomes_tab]{biomes_tab()}} under that label. Pass \code{na = NA} to keep the missing
+values as \code{NA}.}
+
 \item{raster_file}{Optional path to a custom biome raster stack file
 or a \code{SpatRaster}. Only used if \code{biome} is \code{NULL}.}
 }
 \value{
-A data frame with one row per record in \code{x}. Columns are named
-after the input layers, with the suffix \verb{_value} for the raster value
-and \verb{_name} for the biome name. For raster values without a name in
-the legend (typically azonal classes encoded with high values),
-\verb{_name} falls back to \code{"azonal (raster value: X)"}.
+A data frame with one row per record in \code{x}. By default
+(\code{append = TRUE}) the original columns of \code{x} are kept and the
+classification columns are added on the right. With \code{append = FALSE}
+only the classification columns are returned. Classification columns
+are named after the input layers, with the suffix \verb{_value} for the
+raster value and \verb{_name} for the biome name. Raster values without
+a name in the legend (typically azonal classes encoded with high
+values) fall back to \code{"azonal (raster value: X)"}.
 }
 \description{
 For each occurrence record, assigns a biome label based on its spatial
@@ -49,20 +72,16 @@ data frame corresponds to one row (one occurrence record) of \code{x}.
 # Load example occurrence data
 data("biomes_example")
 
-# Classify occurrences and return biome names (uses the 31 default layers)
-biomes_classify(
-  x     = biomes_example,
-  lon   = "decimalLongitude",
-  lat   = "decimalLatitude",
-  value = "name"
-)
+# Default: classify against all 31 layers and append the result to x
+biomes_classify(biomes_example)
 
 # Single layer, both raster value and biome name
-layers <- biomes_get()
-biomes_classify(
-  x     = biomes_example,
-  biome = layers[[1]],
-  value = "both"
-)
+biomes_classify(biomes_example, layer = 1, value = "both")
+
+# Multiple layers
+biomes_classify(biomes_example, layer = c(1, 25))
+
+# Return only the classification columns (old default behaviour)
+biomes_classify(biomes_example, layer = 1, append = FALSE)
 
 }

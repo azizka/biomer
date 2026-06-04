@@ -20,18 +20,32 @@ reference:
   - biomes_information
   - biomes_legend
   - biomes_example
+- title: Get occurrences from GBIF
+  desc: Download and clean GBIF occurrences for a taxon.
+  contents:
+  - biomes_occ
 - title: Classify and summarize occurrences
   contents:
   - biomes_classify
-  - biomes_biome_tab
+  - biomes_tab
+- title: Rank biome layers for a dataset
+  desc: Data-driven scoring of the 31 biome layers for a given occurrence set.
+  contents:
+  - biomes_rank
+  - biomes_show_rank
+- title: Visualize
+  desc: Map occurrence records over a chosen biome layer.
+  contents:
+  - biomes_visualise
+- title: One-call workflow
+  desc: Single-call wrapper from taxon or dataset to table + map.
+  contents:
+  - biomes_full
 
 articles:
 - title: Get started
   navbar: ~
   contents:
-  - biomes-workflow
-- title: Use cases
-  contents:
-  - articles/species_number_per_biome
-  - articles/publicaiton_level_map
-  - articles/compare_biome_definitions
+  - biome-data
+  - classify-summarize-map
+  - one-call-workflow
