@@ -4,6 +4,8 @@
 
 Load raster layers and metadata shipped with the package.
 
+- [`biomes_download()`](https://azizka.github.io/biomes/reference/biomes_download.md)
+  : Download the packaged biome raster stack
 - [`biomes_get()`](https://azizka.github.io/biomes/reference/biomes_get.md)
   : Load the packaged biome raster stack
 - [`biomes_info()`](https://azizka.github.io/biomes/reference/biomes_info.md)

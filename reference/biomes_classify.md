@@ -95,9 +95,15 @@ to `"azonal (raster value: X)"`.
 # Load example occurrence data
 data("biomes_example")
 
+# \donttest{
+# The biome raster (~36 MB) is downloaded and cached on first use.
+
 # Default: classify against all 31 layers and append the result to x
 biomes_classify(biomes_example)
 #> no biome file or layer provided using default biomes
+#> Downloading biome raster stack (~36 MB) to:
+#>   /home/runner/.cache/R/biomes/Biomes_Inventory_RasterStack.tif
+#> This happens only once; the file is cached for future use.
 #> Coordinates provided as data.frame, assuming WGS84 as CRS.
 #> Classified 29104 record(s) against 31 biome layer(s):
 #>   - Biome_Inventory_layer_01 (Allen et al., 2020)
@@ -187202,4 +187208,5 @@ biomes_classify(biomes_example, layer = 1, append = FALSE)
 #> 29102    Boreal evergreen needleleaf forest
 #> 29103    Boreal evergreen needleleaf forest
 #> 29104    Boreal evergreen needleleaf forest
+# }
 ```

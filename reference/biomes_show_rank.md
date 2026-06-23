@@ -27,6 +27,8 @@ biomes_show_rank(ranked, type = c("composite", "na", "criteria"))
 
 ``` r
 data("biomes_example")
+# \donttest{
+# biomes_rank() downloads and caches the biome raster (~36 MB).
 r <- biomes_rank(biomes_example, verbose = FALSE)
 biomes_show_rank(r, type = "composite")
 
@@ -34,4 +36,5 @@ biomes_show_rank(r, type = "na")
 
 biomes_show_rank(r, type = "criteria")
 
+# }
 ```

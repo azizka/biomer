@@ -1,27 +1,9 @@
 # Rank biome layers for a given occurrence dataset
 
-Scores the 31 biome layers shipped with the package for a user-provided
-set of occurrences and proposes a single "best" layer based on the
-(equal-weight) mean of three data-driven criteria:
-
-1.  **coverage**: share of records classified (non-NA).
-
-2.  **effective_classes**: \\\exp(H')\\ (Hill number of order 1),
-    min-max scaled across layers.
-
-3.  **granularity**: classes actually used / classes available in the
-    layer.
-
-Two additional criteria are available on request via `criteria`:
-`"informativeness"` (Pielou's evenness \\J' = H' / \log(k\_{used})\\)
-and `"agreement"` (mean pairwise Cohen's \\\kappa\\ against the other 30
-layers, Monserud & Leemans 1992). All raw scores are min-max scaled to
-\\\[0, 1\]\\ across layers and combined into a `composite_score`. Layers
-are then ranked by the chosen `tiebreaker`: `"year"` or `"classes"`
-produce strict ranks 1..N via the chain
-`composite_score -> <tiebreaker> -> <secondary> -> name`; `"none"`
-produces dense ranks where layers with identical `composite_score` share
-a rank.
+Compares the biome classification layers for a user-supplied set of
+occurrences and proposes a single "best" layer for that dataset. Each
+layer is scored on several data-driven criteria that are combined into
+one `composite_score`, which drives the ranking.
 
 ## Usage
 
@@ -94,7 +76,7 @@ biomes_rank(
 
   How tied `composite_score`s are resolved: `"year"` (default, more
   recent publication ranks higher), `"classes"` (more classes ranks
-  higher), or `"none"` (do not break ties — tied layers share a rank,
+  higher), or `"none"` (do not break ties; tied layers share a rank,
   dense ranking). With `"year"` and `"classes"` the other key serves as
   a further fallback, alphabetical `layer_name` resolves any remaining
   ties, and ranks are strict 1..N. With `"none"` multiple layers may
@@ -104,10 +86,51 @@ biomes_rank(
 
   Logical. Print progress messages? Default `TRUE`.
 
+## Details
+
+By default, three equally weighted criteria are used:
+
+1.  **coverage**: fraction of records that the layer places in a biome
+    at all (the rest fall on unclassified, NA cells).
+
+2.  **effective_classes**: \\\exp(H')\\ (Hill number of order 1), i.e.
+    the effective number of biomes the records spread across, weighted
+    by evenness.
+
+3.  **granularity**: biome classes actually used, divided by the classes
+    available in the layer.
+
+Two further criteria can be requested via `criteria`:
+
+- **informativeness**: Pielou's evenness \\J' = H' / \log(k\_{used})\\.
+
+- **agreement**: mean pairwise Cohen's \\\kappa\\ against the other
+  layers (Monserud & Leemans 1992).
+
+All raw scores are min-max scaled to \\\[0, 1\]\\ across the compared
+layers and averaged into the `composite_score`. Layers are then ordered
+by this score and ties resolved according to `tiebreaker`.
+
+## Note
+
+`biomes_rank()` gives a data-driven ranking, not an authoritative "best"
+classification. The criteria favour layers that cover your records and
+split them into many, evenly-used classes, but the top-ranked layer is
+not necessarily the most suitable one for your question. For best
+results, narrow the comparison to a meaningful group via `scheme_type`,
+and treat the ranking as a shortlist rather than a verdict: inspect the
+per-criterion columns in the result and use
+[`biomes_info()`](https://azizka.github.io/biomes/reference/biomes_info.md)
+to choose the layer whose definition and resolution actually match your
+data.
+
 ## Examples
 
 ``` r
 data("biomes_example")
+
+# \donttest{
+# Ranks layers of the biome raster (~36 MB), downloaded on first use.
 
 # Default call: coverage + effective_classes + granularity, equally weighted
 r <- biomes_rank(biomes_example, verbose = FALSE)
@@ -156,4 +179,5 @@ r2 <- biomes_rank(
   criteria = c("coverage", "effective_classes"),
   verbose  = FALSE
 )
+# }
 ```

@@ -24,5 +24,13 @@
   (per-layer metadata),
   [`biomes_occ()`](https://azizka.github.io/biomes/reference/biomes_occ.md)
   (optional GBIF download with coordinate cleaning).
+- The ~36 MB biome raster stack is not bundled inside the package. It is
+  hosted as a GitHub release asset and downloaded once into a per-user
+  cache directory
+  ([`tools::R_user_dir()`](https://rdrr.io/r/tools/userdir.html)) on
+  first use;
+  [`biomes_download()`](https://azizka.github.io/biomes/reference/biomes_download.md)
+  performs (or refreshes) this download explicitly. This keeps the
+  installed package well under CRAN’s size limit.
 - Three vignettes cover the data and ranking, the building-block
   workflow, and the one-call wrapper.

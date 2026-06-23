@@ -28,7 +28,8 @@ rows of
 ## Examples
 
 ``` r
-# Load the default biome raster stack
+# \donttest{
+# Load the default biome raster stack (downloads ~36 MB on first use)
 biomes_raster <- biomes_get()
 biomes_raster
 #> class       : SpatRaster
@@ -40,4 +41,5 @@ biomes_raster
 #> names       : Biome~er_01, Biome~er_02, Biome~er_03, Biome~er_04, Biome~er_05, Biome~er_06, ...
 #> min values  :           1,           1,           1,           1,           1,           1, ...
 #> max values  :          21,          98,          30,          20,          15,          14, ...
+# }
 ```
