@@ -15,6 +15,7 @@ reference:
 - title: Biome data
   desc: Load raster layers and metadata shipped with the package.
   contents:
+  - biomes_download
   - biomes_get
   - biomes_info
   - biomes_information

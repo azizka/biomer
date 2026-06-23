@@ -9,6 +9,8 @@ Description: Provides raster layers of 31 commonly used biome definitions (from 
  and species into these biomes and visualize.
  Works with user-provided occurrences or a species name, in which case occurrences
  are downloaded from www.gbif.org and cleaned automatically.
+URL: https://azizka.github.io/biomes/, https://github.com/azizka/biomes
+BugReports: https://github.com/azizka/biomes/issues
 Date: 2026-06-04
 Encoding: UTF-8
 Language: en-GB
