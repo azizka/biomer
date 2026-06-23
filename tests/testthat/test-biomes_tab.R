@@ -3,6 +3,7 @@ test_that("biomes_tab works on single-layer ID output (issue #65)", {
     decimalLongitude = c(10.1, -60.5, 35.5, 100.2),
     decimalLatitude  = c(50.0,  -3.2,  -1.2,  20.3)
   )
+  skip_if_no_raster()
   layers <- biomes_get()
 
   out <- suppressWarnings(suppressMessages(
@@ -19,6 +20,7 @@ test_that("biomes_tab works on multi-layer name output", {
     decimalLongitude = c(10.1, -60.5, 35.5, 100.2),
     decimalLatitude  = c(50.0,  -3.2,  -1.2,  20.3)
   )
+  skip_if_no_raster()
   layers <- biomes_get()
 
   out <- suppressWarnings(suppressMessages(

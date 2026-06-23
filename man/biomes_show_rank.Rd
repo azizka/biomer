@@ -19,9 +19,12 @@ Builds a \code{ggplot} from the data frame returned by \code{\link[=biomes_rank]
 }
 \examples{
 data("biomes_example")
+\donttest{
+# biomes_rank() downloads and caches the biome raster (~36 MB).
 r <- biomes_rank(biomes_example, verbose = FALSE)
 biomes_show_rank(r, type = "composite")
 biomes_show_rank(r, type = "na")
 biomes_show_rank(r, type = "criteria")
+}
 
 }

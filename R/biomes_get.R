@@ -11,9 +11,11 @@
 #'   [`biomes_information`]).
 #'
 #' @examples
-#' # Load the default biome raster stack
+#' \donttest{
+#' # Load the default biome raster stack (downloads ~36 MB on first use)
 #' biomes_raster <- biomes_get()
 #' biomes_raster
+#' }
 #'
 #' @importFrom terra rast
 #' @export
@@ -25,10 +27,7 @@ biomes_get <- function(...) {
     .var.name = "biomes_get() does not take any arguments"
   )
 
-  rasterfile <- system.file(
-    "extdata/Biomes_Inventory_RasterStack.tif",
-    package = "biomes"
-  )
+  rasterfile <- biomes_raster_path()
 
   terra::rast(rasterfile)
 }

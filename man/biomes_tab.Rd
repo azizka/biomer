@@ -32,6 +32,9 @@ with the original data).
 # Load example occurrence data
 data("biomes_example")
 
+\donttest{
+# biomes_classify() downloads and caches the biome raster (~36 MB).
+
 # Tabulate by biome name
 classified_names <- biomes_classify(
   x     = biomes_example,
@@ -45,5 +48,6 @@ classified_ids <- biomes_classify(
   value = "ID"
 )
 biomes_tab(classified_ids, value = "ID")
+}
 
 }

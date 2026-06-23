@@ -25,6 +25,21 @@ knitr::opts_chunk$set(
   comment  = "#>"
 )
 library(biomes)
+
+# Several chunks below need the ~36 MB biome raster, which is downloaded
+# on first use. Render them only when the raster can be fetched without
+# burdening CRAN: locally (NOT_CRAN = "true") we download it; on CRAN
+# these chunks are skipped, so the vignette builds without network access.
+run_raster <- isTRUE(as.logical(Sys.getenv("NOT_CRAN", "false")))
+if (run_raster) {
+  run_raster <- tryCatch(
+    {
+      biomes_download(quiet = TRUE)
+      TRUE
+    },
+    error = function(e) FALSE
+  )
+}
 ```
 
 # Goal
@@ -52,7 +67,7 @@ that suggests the most informative layer for a dataset.
 `biomes_get()` returns the packaged raster stack: 31 biome definitions
 (Fischer et al. 2022) at 10 × 10 km resolution, globally.
 
-```{r}
+```{r, eval = run_raster}
 layers <- biomes_get()
 layers
 ```
@@ -60,7 +75,7 @@ layers
 It is an ordinary `terra::SpatRaster`, so you can subset and plot single
 layers directly (`biomes` attaches **terra** for you):
 
-```{r, fig.alt = "World map of biome layer 1", fig.width = 7, fig.height = 4}
+```{r, eval = run_raster, fig.alt = "World map of biome layer 1", fig.width = 7, fig.height = 4}
 layers[[1]]
 plot(layers[[1]])
 ```
@@ -136,7 +151,7 @@ occurrences and proposes a single best layer. It rates each layer on
 coverage (share of records classified), the effective number of biome
 classes, and granularity, then combines these into a composite score.
 
-```{r}
+```{r, eval = run_raster}
 r       <- biomes_rank(biomes_example, verbose = FALSE)
 best_id <- attr(r, "best_layer")
 best_id
@@ -145,7 +160,7 @@ head(r)
 
 `biomes_show_rank()` visualizes the ranking from three angles:
 
-```{r, eval = requireNamespace("ggplot2", quietly = TRUE), fig.width = 7, fig.height = 4}
+```{r, eval = run_raster && requireNamespace("ggplot2", quietly = TRUE), fig.width = 7, fig.height = 4}
 biomes_show_rank(r, type = "composite")   # composite score per layer
 biomes_show_rank(r, type = "na")          # % unclassified per layer
 biomes_show_rank(r, type = "criteria")    # heatmap of all criteria

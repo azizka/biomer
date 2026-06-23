@@ -1,25 +1,43 @@
 #' Rank biome layers for a given occurrence dataset
 #'
-#' Scores the 31 biome layers shipped with the package for a user-provided
-#' set of occurrences and proposes a single "best" layer based on the
-#' (equal-weight) mean of three data-driven criteria:
+#' Compares the biome classification layers for a user-supplied set of
+#' occurrences and proposes a single "best" layer for that dataset. Each
+#' layer is scored on several data-driven criteria that are combined into
+#' one `composite_score`, which drives the ranking.
+#'
+#' By default, three equally weighted criteria are used:
 #' \enumerate{
-#'   \item \strong{coverage}: share of records classified (non-NA).
+#'   \item \strong{coverage}: fraction of records that the layer places in
+#'     a biome at all (the rest fall on unclassified, NA cells).
 #'   \item \strong{effective_classes}: \eqn{\exp(H')} (Hill number of
-#'     order 1), min-max scaled across layers.
-#'   \item \strong{granularity}: classes actually used / classes available
-#'     in the layer.
+#'     order 1), i.e. the effective number of biomes the records spread
+#'     across, weighted by evenness.
+#'   \item \strong{granularity}: biome classes actually used, divided by
+#'     the classes available in the layer.
 #' }
-#' Two additional criteria are available on request via `criteria`:
-#' `"informativeness"` (Pielou's evenness \eqn{J' = H' / \log(k_{used})})
-#' and `"agreement"` (mean pairwise Cohen's \eqn{\kappa} against the
-#' other 30 layers, Monserud & Leemans 1992). All raw scores are min-max
-#' scaled to \eqn{[0, 1]} across layers and combined into a
-#' `composite_score`. Layers are then ranked by the chosen `tiebreaker`:
-#' `"year"` or `"classes"` produce strict ranks 1..N via the chain
-#' `composite_score -> <tiebreaker> -> <secondary> -> name`; `"none"`
-#' produces dense ranks where layers with identical `composite_score`
-#' share a rank.
+#'
+#' Two further criteria can be requested via `criteria`:
+#' \itemize{
+#'   \item \strong{informativeness}: Pielou's evenness
+#'     \eqn{J' = H' / \log(k_{used})}.
+#'   \item \strong{agreement}: mean pairwise Cohen's \eqn{\kappa} against
+#'     the other layers (Monserud & Leemans 1992).
+#' }
+#'
+#' All raw scores are min-max scaled to \eqn{[0, 1]} across the compared
+#' layers and averaged into the `composite_score`. Layers are then ordered
+#' by this score and ties resolved according to `tiebreaker`.
+#'
+#' @note
+#' `biomes_rank()` gives a data-driven ranking, not an authoritative
+#' "best" classification. The criteria favour layers that cover your
+#' records and split them into many, evenly-used classes, but the
+#' top-ranked layer is not necessarily the most suitable one for your
+#' question. For best results, narrow the comparison to a meaningful
+#' group via `scheme_type`, and treat the ranking as a shortlist rather
+#' than a verdict: inspect the per-criterion columns in the result and
+#' use [biomes_info()] to choose the layer whose definition and
+#' resolution actually match your data.
 #'
 #' @param x A data frame with longitude / latitude columns, an `sf`
 #'   spatial object, or a `terra::SpatVector` of point geometries.
@@ -47,7 +65,7 @@
 #'   `"agreement"`. Default: the first three.
 #' @param tiebreaker How tied `composite_score`s are resolved: `"year"`
 #'   (default, more recent publication ranks higher), `"classes"` (more
-#'   classes ranks higher), or `"none"` (do not break ties — tied layers
+#'   classes ranks higher), or `"none"` (do not break ties; tied layers
 #'   share a rank, dense ranking). With `"year"` and `"classes"` the
 #'   other key serves as a further fallback, alphabetical `layer_name`
 #'   resolves any remaining ties, and ranks are strict 1..N. With
@@ -56,6 +74,9 @@
 #'
 #' @examples
 #' data("biomes_example")
+#'
+#' \donttest{
+#' # Ranks layers of the biome raster (~36 MB), downloaded on first use.
 #'
 #' # Default call: coverage + effective_classes + granularity, equally weighted
 #' r <- biomes_rank(biomes_example, verbose = FALSE)
@@ -68,6 +89,7 @@
 #'   criteria = c("coverage", "effective_classes"),
 #'   verbose  = FALSE
 #' )
+#' }
 #'
 #' @export
 biomes_rank <- function(
@@ -292,10 +314,13 @@ biomes_rank <- function(
 #'
 #' @examples
 #' data("biomes_example")
+#' \donttest{
+#' # biomes_rank() downloads and caches the biome raster (~36 MB).
 #' r <- biomes_rank(biomes_example, verbose = FALSE)
 #' biomes_show_rank(r, type = "composite")
 #' biomes_show_rank(r, type = "na")
 #' biomes_show_rank(r, type = "criteria")
+#' }
 #'
 #' @export
 biomes_show_rank <- function(ranked, type = c("composite", "na", "criteria")) {
@@ -568,7 +593,7 @@ biomes_show_rank <- function(ranked, type = c("composite", "na", "criteria")) {
 }
 
 #' Compute "total classes" for a ranked data frame, even if the user
-#' passed a custom raster (legend unknown) — fall back to NA there.
+#' passed a custom raster (legend unknown); fall back to NA there.
 #'
 #' @keywords internal
 #' @noRd

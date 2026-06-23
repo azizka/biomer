@@ -4,7 +4,7 @@ template:
   bootstrap: 5
 
 home:
-  title: biomes — 31 biome layers and utilities for biogeographic research
+  title: 'biomes: 31 biome layers and utilities for biogeographic research'
   description: >
     biomes provides raster layers of 31 commonly used biome definitions
     (Fischer et al, 2022) at 10x10 km resolution globally, plus

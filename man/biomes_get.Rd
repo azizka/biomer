@@ -20,8 +20,10 @@ Loads the 31 biome layers shipped with the package as a
 \code{terra::SpatRaster} stack.
 }
 \examples{
-# Load the default biome raster stack
+\donttest{
+# Load the default biome raster stack (downloads ~36 MB on first use)
 biomes_raster <- biomes_get()
 biomes_raster
+}
 
 }

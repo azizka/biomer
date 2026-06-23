@@ -45,6 +45,9 @@
 #' # Load example occurrence data
 #' data("biomes_example")
 #'
+#' \donttest{
+#' # The biome raster (~36 MB) is downloaded and cached on first use.
+#'
 #' # Default: classify against all 31 layers and append the result to x
 #' biomes_classify(biomes_example)
 #'
@@ -56,6 +59,7 @@
 #'
 #' # Return only the classification columns (old default behaviour)
 #' biomes_classify(biomes_example, layer = 1, append = FALSE)
+#' }
 #'
 #' @importFrom terra nlyr rast sources
 #' @importFrom readr parse_number
@@ -123,11 +127,7 @@ biomes_classify <- function(
       if (is.null(layer)) {
         message("no biome file or layer provided using default biomes")
       }
-      raster_file <- system.file(
-        "extdata",
-        "Biomes_Inventory_RasterStack.tif",
-        package = "biomes"
-      )
+      raster_file <- biomes_raster_path()
     }
     biome <- terra::rast(raster_file)
     if (!is.null(layer)) {
@@ -164,11 +164,9 @@ biomes_classify <- function(
   # terra::sources(): the latter can fail after subsetting, in-memory copies,
   # or pkgload::load_all() dev sessions, even though the raster values are
   # still the packaged ones.
-  default_raster <- system.file(
-    "extdata",
-    "Biomes_Inventory_RasterStack.tif",
-    package = "biomes"
-  )
+  # Path comparison only - do NOT trigger a download here. If the raster
+  # has not been cached yet, this path simply will not match any source.
+  default_raster <- biomes_cache_path()
   is_default <- identical(terra::sources(biome), default_raster) ||
     all(grepl("^Biome_Inventory_layer_[0-9]+$", names(biome)))
   legend_df  <- if (is_default) biomes::biomes_legend else NULL

@@ -72,6 +72,9 @@ data frame corresponds to one row (one occurrence record) of \code{x}.
 # Load example occurrence data
 data("biomes_example")
 
+\donttest{
+# The biome raster (~36 MB) is downloaded and cached on first use.
+
 # Default: classify against all 31 layers and append the result to x
 biomes_classify(biomes_example)
 
@@ -83,5 +86,6 @@ biomes_classify(biomes_example, layer = c(1, 25))
 
 # Return only the classification columns (old default behaviour)
 biomes_classify(biomes_example, layer = 1, append = FALSE)
+}
 
 }

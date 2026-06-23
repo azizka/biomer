@@ -7,6 +7,7 @@ make_df <- function() {
 }
 
 test_that("biomes_classify appends one _name column per layer (value='name')", {
+  skip_if_no_raster()
   df     <- make_df()
   layers <- biomes_get()
 
@@ -23,6 +24,7 @@ test_that("biomes_classify appends one _name column per layer (value='name')", {
 })
 
 test_that("biomes_classify with append=FALSE returns only classification columns", {
+  skip_if_no_raster()
   df     <- make_df()
   layers <- biomes_get()
 
@@ -37,6 +39,7 @@ test_that("biomes_classify with append=FALSE returns only classification columns
 })
 
 test_that("biomes_classify with value='ID' returns *_value columns", {
+  skip_if_no_raster()
   df     <- make_df()
   layers <- biomes_get()
 
@@ -51,6 +54,7 @@ test_that("biomes_classify with value='ID' returns *_value columns", {
 })
 
 test_that("biomes_classify with value='both' interleaves _value and _name", {
+  skip_if_no_raster()
   df     <- make_df()
   layers <- biomes_get()
 
@@ -67,6 +71,7 @@ test_that("biomes_classify with value='both' interleaves _value and _name", {
 })
 
 test_that("biomes_classify replaces unknown azonal values with a fallback name", {
+  skip_if_no_raster()
   df     <- make_df()
   layers <- biomes_get()
 

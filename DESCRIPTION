@@ -2,15 +2,16 @@ Package: biomes
 Title: User-Friendly Species-to-Biome Classification
 Version: 0.9.2
 Authors@R:
-    c(person("Hans Christian", "Groß", email = "hc1gross@googlemail.com", role = c("cre", "aut")),
+    c(person("Hans Christian", "Groß", email = "hc.gross@gmx.de", role = c("cre", "aut")),
         person("Alexander", "Zizka", email = "alexander.zizka@biologie.uni-marburg.de", role = c("aut", "fnd")))
-Description: Provides raster layers of 31 commonly used biome definitions (from Fischer et al, 2022)
+Description: Provides raster layers of 31 commonly used biome definitions (from Fischer and colleagues, 2022) <doi:10.1111/geb.13574>
  at 10x10 km resolution globally. Furthermore contains two functions to classify species occurrences
  and species into these biomes and visualize.
  Works with user-provided occurrences or a species name, in which case occurrences
  are downloaded from www.gbif.org and cleaned automatically.
 Date: 2026-06-04
 Encoding: UTF-8
+Language: en-GB
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 8.0.0
 Depends:
@@ -23,7 +24,8 @@ Imports:
     ggplot2,
     sf,
     viridis,
-    tidyterra
+    tidyterra,
+    utils
 VignetteBuilder: knitr
 Suggests:
     knitr,

@@ -23,6 +23,21 @@ knitr::opts_chunk$set(
   comment  = "#>"
 )
 library(biomes)
+
+# Several chunks below need the ~36 MB biome raster, which is downloaded
+# on first use. Render them only when the raster can be fetched without
+# burdening CRAN: locally (NOT_CRAN = "true") we download it; on CRAN
+# these chunks are skipped, so the vignette builds without network access.
+run_raster <- isTRUE(as.logical(Sys.getenv("NOT_CRAN", "false")))
+if (run_raster) {
+  run_raster <- tryCatch(
+    {
+      biomes_download(quiet = TRUE)
+      TRUE
+    },
+    error = function(e) FALSE
+  )
+}
 ```
 
 # Goal
@@ -53,7 +68,7 @@ and returns the **input data with the biome assignment appended on the
 right**. You pick the layer by index; no need to handle `SpatRaster`
 objects yourself.
 
-```{r}
+```{r, eval = run_raster}
 class_1 <- biomes_classify(biomes_example, layer = 1)
 head(class_1)
 ```
@@ -62,13 +77,13 @@ A new column `Biome_Inventory_layer_01_name` has been added. Records
 that fall outside every biome polygon are labelled `"no_biome"` rather
 than dropped, so the counts stay complete:
 
-```{r}
+```{r, eval = run_raster}
 table(class_1$Biome_Inventory_layer_01_name, useNA = "ifany")
 ```
 
 ## Common variations
 
-```{r}
+```{r, eval = run_raster}
 # Several layers at once, one column per layer
 class_multi <- biomes_classify(biomes_example, layer = c(1, 25))
 head(class_multi)
@@ -96,13 +111,13 @@ outside the packaged stack, pass a `terra::SpatRaster` via `biome =`.
 occurrence) per biome and layer, returning a long table with one row per
 (layer, biome) pair:
 
-```{r}
+```{r, eval = run_raster}
 biomes_tab(class_1)
 ```
 
 It handles multi-layer classifications in the same call:
 
-```{r}
+```{r, eval = run_raster}
 biomes_tab(class_multi)
 ```
 
@@ -110,7 +125,7 @@ Because off-polygon points are labelled `"no_biome"`, every record is
 counted. To count **unique species** per biome instead of records,
 deduplicate by `species` before tabulating:
 
-```{r, eval = requireNamespace("dplyr", quietly = TRUE)}
+```{r, eval = run_raster && requireNamespace("dplyr", quietly = TRUE)}
 library(dplyr)
 
 class_1 |>
@@ -126,7 +141,7 @@ class_1 |>
 raster, overlays the occurrence points, and appends the per-biome record
 counts to the legend labels (so they match `biomes_tab()` exactly).
 
-```{r, eval = all(vapply(c("sf", "ggplot2", "viridis", "tidyterra"), requireNamespace, logical(1), quietly = TRUE)), fig.width = 7, fig.height = 4, fig.alt = "Occurrences mapped over biome layer 1"}
+```{r, eval = run_raster && all(vapply(c("sf", "ggplot2", "viridis", "tidyterra"), requireNamespace, logical(1), quietly = TRUE)), fig.width = 7, fig.height = 4, fig.alt = "Occurrences mapped over biome layer 1"}
 biomes_visualise(biomes_example, layer = 1)
 ```
 
@@ -134,7 +149,7 @@ By default the map shows the biome colours, the points, and a legend on
 the right. The pie inset is **off by default** (`pie = FALSE`); switch it
 on to show the share of records per biome (segments ≥ 5 % are labelled):
 
-```{r, eval = all(vapply(c("sf", "ggplot2", "viridis", "tidyterra", "cowplot", "ggforce"), requireNamespace, logical(1), quietly = TRUE)), fig.width = 7, fig.height = 4, fig.alt = "Biome map with pie inset"}
+```{r, eval = run_raster && all(vapply(c("sf", "ggplot2", "viridis", "tidyterra", "cowplot", "ggforce"), requireNamespace, logical(1), quietly = TRUE)), fig.width = 7, fig.height = 4, fig.alt = "Biome map with pie inset"}
 biomes_visualise(biomes_example, layer = 1, pie = TRUE)
 ```
 

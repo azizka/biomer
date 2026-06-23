@@ -2,6 +2,7 @@
 
 S3method(print,biomes_full)
 export(biomes_classify)
+export(biomes_download)
 export(biomes_full)
 export(biomes_get)
 export(biomes_info)
@@ -15,3 +16,4 @@ importFrom(rlang,.data)
 importFrom(terra,nlyr)
 importFrom(terra,rast)
 importFrom(terra,sources)
+importFrom(utils,download.file)
