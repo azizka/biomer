@@ -8,8 +8,10 @@ Local check: 0 errors | 0 warnings | 0 notes
 win-builder check: 0 errors | 0 warnings | 1 note
 (both R-release 4.6.0 and R-devel; results identical).
 
-NOTE: please re-run win-builder after the data release asset is in
-place and update the counts above to match the fresh results.
+NOTE: checking CRAN incoming feasibility ... [12s] NOTE
+  Maintainer: 'Hans Christian Groß <hc.gross@gmx.de>'
+  
+  New submission
 
 ## Test environments
 
