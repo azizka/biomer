@@ -1,0 +1,40 @@
+citHeader(
+  "To cite the biomes package in publications, please cite both the R package",
+  "and the underlying biome inventory:"
+)
+
+bibentry(
+  bibtype = "Manual",
+  title   = "{biomes}: Reproducibly Classify Occurrence Records Using 31 Global Biome Schemes",
+  author  = c(person("Hans Christian", "Groß"),
+              person("Alexander", "Zizka"),
+              person("Anna", "Walentowitz"),
+              person("Jan-Christopher", "Fischer")),
+  year    = "2026",
+  note    = paste("R package version", meta$Version),
+  url     = "https://azizka.github.io/biomes/",
+  textVersion = paste0(
+    "Groß HC, Zizka A, Walentowitz A, Fischer J-C (2026). ",
+    "biomes: Reproducibly Classify Occurrence Records Using 31 Global Biome Schemes. ",
+    "R package version ", meta$Version, ". https://azizka.github.io/biomes/"
+  )
+)
+
+bibentry(
+  bibtype = "Article",
+  title   = "The biome inventory - Standardizing global biogeographical land units",
+  author  = c(person("Jan-Christopher", "Fischer"),
+              person("Anna", "Walentowitz"),
+              person("Carl", "Beierkuhnlein")),
+  journal = "Global Ecology and Biogeography",
+  year    = "2022",
+  volume  = "31",
+  number  = "11",
+  pages   = "2172--2183",
+  doi     = "10.1111/geb.13574",
+  textVersion = paste0(
+    "Fischer J-C, Walentowitz A, Beierkuhnlein C (2022). ",
+    "The biome inventory - Standardizing global biogeographical land units. ",
+    "Global Ecology and Biogeography 31(11): 2172-2183. doi:10.1111/geb.13574"
+  )
+)

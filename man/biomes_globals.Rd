@@ -25,6 +25,8 @@ Authors:
 \itemize{
   \item Hans Christian Groß \email{hc.gross@gmx.de}
   \item Alexander Zizka \email{alexander.zizka@biologie.uni-marburg.de} [funder]
+  \item Anna Walentowitz
+  \item Jan-Christopher Fischer
 }
 
 }
