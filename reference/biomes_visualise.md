@@ -1,23 +1,25 @@
-# Map occurrences over a biome layer
+# Visualise the biomes workflow (ranking, map and biome-class composition)
 
-Produces a publication-style map of occurrence records overlaid on a
-single biome layer (rendered as a categorical raster). Optionally adds a
-pie-chart inset showing the proportion of records per biome.
+Produces the publication figure of the *biomes* workflow for a set of
+occurrence records. Up to three panels are drawn and combined:
 
 ## Usage
 
 ``` r
 biomes_visualise(
   x,
-  layer = 1L,
+  scheme = NULL,
+  scheme_type = "all",
   biome = NULL,
   lon = "decimalLongitude",
   lat = "decimalLatitude",
-  pie = FALSE,
+  panels = c("rank", "map", "barplot"),
+  legend_counts = TRUE,
   legend = TRUE,
   point_color = "#B20000",
   point_size = 0.25,
-  title = NULL
+  combine = TRUE,
+  verbose = FALSE
 )
 ```
 
@@ -30,40 +32,46 @@ biomes_visualise(
   [`terra::SpatVector`](https://rspatial.github.io/terra/reference/SpatVector-class.html)
   of point geometries.
 
-- layer:
+- scheme:
 
-  Integer in `1:31` (default `1`). Index into the packaged biome raster
-  stack. Ignored when `biome` is provided.
+  Integer in `1:31` (biome scheme number). If `NULL` (default), the
+  best-fitting scheme is chosen by
+  [`biomes_rank()`](https://azizka.github.io/biomes/reference/biomes_rank.md)
+  (within `scheme_type`).
+
+- scheme_type:
+
+  Character. Methodological group to rank within when `scheme` is
+  `NULL`; passed to
+  [`biomes_rank()`](https://azizka.github.io/biomes/reference/biomes_rank.md).
+  Default `"all"`.
 
 - biome:
 
-  Optional
-  [`terra::SpatRaster`](https://rspatial.github.io/terra/reference/SpatRaster-class.html)
-  with a single layer. If `NULL`, the layer at index `layer` of the
-  packaged raster stack is used.
+  Optional single-layer
+  [`terra::SpatRaster`](https://rspatial.github.io/terra/reference/SpatRaster-class.html).
+  If supplied it is mapped directly and only the `map` panel is
+  available (no ranking).
 
-- lon:
+- lon, lat:
 
-  Column name of longitude in `x` (data frame only). Default
-  `"decimalLongitude"`.
+  Column names of longitude / latitude in `x` (data frame only).
+  Defaults `"decimalLongitude"`/`"decimalLatitude"`.
 
-- lat:
+- panels:
 
-  Column name of latitude in `x` (data frame only). Default
-  `"decimalLatitude"`.
+  Character vector, any subset of `c("rank", "map", "barplot")` (default
+  all three). Panels are drawn and lettered in this order.
 
-- pie:
+- legend_counts:
 
-  Logical. If `TRUE`, draw a pie inset on the map showing the share of
-  records per biome (only segments \>= 5% are labelled). Default
-  `FALSE`.
+  Logical. If `TRUE` (default), append the number of records per biome
+  class to the map legend labels.
 
 - legend:
 
-  Logical. If `TRUE` (default), draw the biome colour legend on the
-  right side of the map. Set to `FALSE` to drop it (useful for clean
-  publication figures or when the pie inset already conveys the
-  proportions).
+  Logical. If `TRUE` (default), draw the biome-class colour legend on
+  the map panel.
 
 - point_color:
 
@@ -73,36 +81,59 @@ biomes_visualise(
 
   Numeric size of the occurrence points. Default `0.25`.
 
-- title:
+- combine:
 
-  Plot title. If `NULL` (default), a sensible title is generated from
-  the layer name and the source.
+  Logical. When more than one panel is drawn: `TRUE` (default) combines
+  them into one lettered figure (a, b, c); `FALSE` returns a **named
+  list** of the individual panels (no letters). Ignored for a single
+  panel (always returned as a bare `ggplot`).
+
+- verbose:
+
+  Logical. Passed to
+  [`biomes_rank()`](https://azizka.github.io/biomes/reference/biomes_rank.md).
+  Default `FALSE`.
 
 ## Value
 
-A `ggplot` object (when `pie = FALSE`) or a
-[`cowplot::ggdraw`](https://wilkelab.org/cowplot/reference/ggdraw.html)
-object (when `pie = TRUE`). Print to display or save with
+For a single panel, a `ggplot` object. For several panels: a combined
+`cowplot` object when `combine = TRUE` (default), or a named list of
+`ggplot` objects (`rank`, `map`, `barplot`) when `combine = FALSE`.
+Print to display or save with
 [`ggplot2::ggsave()`](https://ggplot2.tidyverse.org/reference/ggsave.html).
 
 ## Details
 
-The chosen biome layer is drawn directly with
-[`tidyterra::geom_spatraster()`](https://dieghernan.github.io/tidyterra/reference/geom_spatraster.html)
-(no polygonisation), occurrence points are reprojected to the layer's
-CRS, and the count per biome – computed via
-[`biomes_classify()`](https://azizka.github.io/biomes/reference/biomes_classify.md)
-so it matches
-[`biomes_tab()`](https://azizka.github.io/biomes/reference/biomes_tab.md)
-exactly – is appended to the legend labels.
+- **rank**: the data-driven ranking of the biome schemes
+  ([`biomes_rank()`](https://azizka.github.io/biomes/reference/biomes_rank.md)):
+  the composite score per scheme (best highlighted) next to the raw
+  criterion values it averages (coverage, effective number of classes,
+  granularity, ...).
+
+- **map**: the occurrence records (points) mapped over the chosen biome
+  scheme, with the number of records per biome class optionally appended
+  to the legend labels.
+
+- **barplot**: the number of occurrence records (left) and species
+  (right) per biome class, with the biome-class names in the centre.
+
+Which panels are drawn is controlled by `panels`; the panel letters (a,
+b, c) are assigned in drawing order, so selecting only `rank` and
+`barplot` labels them (a) and (b).
 
 ## Examples
 
 ``` r
 if (FALSE) { # \dontrun{
 data("biomes_example")
-biomes_visualise(biomes_example, layer = 1)
-biomes_visualise(biomes_example, layer = 17, pie = FALSE)
-biomes_visualise(biomes_example, layer = 1, legend = FALSE)
+# full figure (rank + map + barplot), best scheme chosen automatically
+biomes_visualise(biomes_example)
+
+# only the map, for a fixed scheme
+biomes_visualise(biomes_example, scheme = 1, panels = "map")
+
+# map + barplot for the best vegetation scheme
+biomes_visualise(biomes_example, scheme_type = "vegetation",
+                 panels = c("map", "barplot"))
 } # }
 ```

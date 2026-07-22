@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">biomes</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -18,9 +18,10 @@
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/biome-data.html">1. Biome layers and occurrence data</a></li>
-    <li><a class="dropdown-item" href="../articles/classify-summarize-map.html">2. Classify, summarize and map</a></li>
-    <li><a class="dropdown-item" href="../articles/one-call-workflow.html">3. The one-call workflow with biomes_full()</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/step1-occurrence-records-and-biome-schemes.html">Step 1: Assembling occurrence records and biome schemes</a></li>
+    <li><a class="dropdown-item" href="../articles/step2-choosing-a-biome-scheme.html">Step 2: Choosing a biome scheme</a></li>
+    <li><a class="dropdown-item" href="../articles/step3-occurrence-to-biome-classification.html">Step 3: Occurrences-to-biome classification</a></li>
+    <li><a class="dropdown-item" href="../articles/step4-output-and-visualisation.html">Step 4: Output and visualisation</a></li>
   </ul></li>
 <li class="active nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -39,12 +40,19 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.9.2" id="biomes-092">biomes 0.9.2<a class="anchor" aria-label="anchor" href="#biomes-092"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.9.3" id="biomes-093">biomes 0.9.3<a class="anchor" aria-label="anchor" href="#biomes-093"></a></h2>
 <ul><li>Initial CRAN submission.</li>
-<li>Provides raster layers of 31 biome definitions from Fischer et al. (2022, <em>Global Ecology and Biogeography</em> 31(11): 2172-2183) at 10 x 10 km resolution globally.</li>
-<li>Core functions: <code><a href="../reference/biomes_classify.html">biomes_classify()</a></code> (assign occurrences to biomes), <code><a href="../reference/biomes_rank.html">biomes_rank()</a></code> (rank layers by coverage, effective number of classes, and granularity), <code><a href="../reference/biomes_tab.html">biomes_tab()</a></code> (tabulate records per biome), <code><a href="../reference/biomes_visualise.html">biomes_visualise()</a></code> (publication-style map), <code><a href="../reference/biomes_full.html">biomes_full()</a></code> (one-call wrapper), <code><a href="../reference/biomes_get.html">biomes_get()</a></code> (load the raster stack), <code><a href="../reference/biomes_info.html">biomes_info()</a></code> (per-layer metadata), <code><a href="../reference/biomes_occ.html">biomes_occ()</a></code> (optional GBIF download with coordinate cleaning).</li>
+<li>Provides raster layers of 31 global biome schemes from Fischer et al. (2022, <em>Global Ecology and Biogeography</em> 31(11): 2172-2183) at 10 x 10 km resolution globally.</li>
+<li>Terminology: schemes are addressed by their <strong>biome scheme number</strong> (1-31). The <code>scheme</code> argument of <code><a href="../reference/biomes_classify.html">biomes_classify()</a></code>, <code><a href="../reference/biomes_rank.html">biomes_rank()</a></code>, <code><a href="../reference/biomes_visualise.html">biomes_visualise()</a></code> and <code><a href="../reference/biomes_full.html">biomes_full()</a></code> replaces the former <code>layer</code> argument; <code><a href="../reference/biomes_rank.html">biomes_rank()</a></code> returns the columns <code>scheme</code>/<code>scheme_name</code> and the attribute <code>best_scheme</code>; <code><a href="../reference/biomes_tab.html">biomes_tab()</a></code> returns a <code>scheme</code> column; <code>biomes_information</code> uses the column <code>scheme_number</code>.</li>
+<li>Core functions: <code><a href="../reference/biomes_classify.html">biomes_classify()</a></code> (assign occurrence records to biome classes), <code><a href="../reference/biomes_rank.html">biomes_rank()</a></code> (rank schemes by coverage, effective number of classes, and granularity), <code><a href="../reference/biomes_tab.html">biomes_tab()</a></code> (tabulate records per biome class), <code><a href="../reference/biomes_visualise.html">biomes_visualise()</a></code> (combined figure with <code>rank</code>, <code>map</code> and <code>barplot</code> panels, selectable via <code>panels</code>), <code><a href="../reference/biomes_full.html">biomes_full()</a></code> (one-call wrapper), <code><a href="../reference/biomes_get.html">biomes_get()</a></code> (load the raster stack), <code><a href="../reference/biomes_info.html">biomes_info()</a></code> (per-scheme metadata), <code><a href="../reference/biomes_occ.html">biomes_occ()</a></code> (optional GBIF download with coordinate cleaning).</li>
+<li>
+<code><a href="../reference/biomes_visualise.html">biomes_visualise()</a></code> now reproduces the full workflow figure: the <code>rank</code> panel shows the composite score plus the raw criteria it averages (coverage, effective classes, granularity), the <code>map</code> panel shows the occurrence map (with an adaptive legend), and the <code>barplot</code> panel shows records and species per biome class back-to-back with centred labels. With <code>combine = FALSE</code> the individual panels are returned as a named list instead of one lettered figure. The former <code>biomes_show_rank()</code> has been removed (its ranking view is the <code>rank</code> panel).</li>
+<li>
+<code><a href="../reference/biomes_full.html">biomes_full()</a></code>: the <code>scheme</code> argument also accepts a scheme type (<code>"climate"</code>, <code>"vegetation"</code>, <code>"land_cover"</code>, <code>"ecoregion"</code>, <code>"integrative"</code>, <code>"anthropogenic"</code>) to pick the best-fitting scheme within that group, in addition to an integer <code>1:31</code> and <code>"best"</code>. A new <code>plot</code> argument controls which figure(s) are built: <code>"none"</code> (default, no figure, the fastest option), <code>"all"</code> (the combined lettered figure in <code>$plot</code>), or a subset of <code>c("rank", "map", "barplot")</code> (returned individually, without panel letters, in <code>$rank</code>, <code>$map</code> and <code>$barplot</code>).</li>
 <li>The ~36 MB biome raster stack is not bundled inside the package. It is hosted as a GitHub release asset and downloaded once into a per-user cache directory (<code><a href="https://rdrr.io/r/tools/userdir.html" class="external-link">tools::R_user_dir()</a></code>) on first use; <code><a href="../reference/biomes_download.html">biomes_download()</a></code> performs (or refreshes) this download explicitly. This keeps the installed package well under CRAN’s size limit.</li>
-<li>Three vignettes cover the data and ranking, the building-block workflow, and the one-call wrapper.</li>
+<li>Four vignettes follow the four-step workflow (<code>step1-</code> .. <code>step4-</code>):
+<ol style="list-style-type: decimal"><li>assembling occurrence records and biome schemes, (2) choosing a biome scheme, (3) occurrences-to-biome classification, and (4) output and visualisation.</li>
+</ol></li>
 </ul></div>
   </main></div>
 
@@ -54,7 +62,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>

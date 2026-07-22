@@ -33,9 +33,10 @@ A data frame with 31 rows and 12 columns:
 
   Methodology used to derive the biome classification.
 
-- layer_in_raster_stack:
+- scheme_number:
 
-  Index of the corresponding layer in the raster stack returned by
+  Biome scheme number (1-31); index of the corresponding layer in the
+  raster stack returned by
   [`biomes_get()`](https://azizka.github.io/biomes/reference/biomes_get.md).
 
 - background_and_specifications:

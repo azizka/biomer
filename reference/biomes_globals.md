@@ -1,12 +1,25 @@
 # Internal package setup for biomes
 
-Provides raster layers of 31 commonly used biome definitions (from
-Fischer and colleagues, 2022)
-[doi:10.1111/geb.13574](https://doi.org/10.1111/geb.13574) at 10x10 km
-resolution globally. Furthermore contains two functions to classify
-species occurrences and species into these biomes and visualize. Works
-with user-provided occurrences or a species name, in which case
-occurrences are downloaded from www.gbif.org and cleaned automatically.
+Reproducibly classifies occurrence records into biome classes using 31
+published global terrestrial biome schemes compiled by Fischer and
+colleagues (2022)
+[doi:10.1111/geb.13574](https://doi.org/10.1111/geb.13574) , provided as
+harmonised raster layers at 10x10 km resolution globally. Includes
+functions to choose the most suitable biome scheme for a dataset by a
+data-driven ranking, to classify occurrence records, and to tabulate and
+visualise the result. Works with user-provided occurrences or a taxon
+name, in which case occurrences are downloaded from www.gbif.org and
+cleaned automatically.
+
+## See also
+
+Useful links:
+
+- <https://azizka.github.io/biomes/>
+
+- <https://github.com/azizka/biomes>
+
+- Report bugs at <https://github.com/azizka/biomes/issues>
 
 ## Author
 

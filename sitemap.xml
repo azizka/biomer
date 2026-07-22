@@ -1,10 +1,11 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
 <url><loc>https://azizka.github.io/biomes/404.html</loc></url>
 <url><loc>https://azizka.github.io/biomes/LICENSE.html</loc></url>
-<url><loc>https://azizka.github.io/biomes/articles/biome-data.html</loc></url>
-<url><loc>https://azizka.github.io/biomes/articles/classify-summarize-map.html</loc></url>
 <url><loc>https://azizka.github.io/biomes/articles/index.html</loc></url>
-<url><loc>https://azizka.github.io/biomes/articles/one-call-workflow.html</loc></url>
+<url><loc>https://azizka.github.io/biomes/articles/step1-occurrence-records-and-biome-schemes.html</loc></url>
+<url><loc>https://azizka.github.io/biomes/articles/step2-choosing-a-biome-scheme.html</loc></url>
+<url><loc>https://azizka.github.io/biomes/articles/step3-occurrence-to-biome-classification.html</loc></url>
+<url><loc>https://azizka.github.io/biomes/articles/step4-output-and-visualisation.html</loc></url>
 <url><loc>https://azizka.github.io/biomes/authors.html</loc></url>
 <url><loc>https://azizka.github.io/biomes/index.html</loc></url>
 <url><loc>https://azizka.github.io/biomes/news/index.html</loc></url>
@@ -19,7 +20,6 @@
 <url><loc>https://azizka.github.io/biomes/reference/biomes_legend.html</loc></url>
 <url><loc>https://azizka.github.io/biomes/reference/biomes_occ.html</loc></url>
 <url><loc>https://azizka.github.io/biomes/reference/biomes_rank.html</loc></url>
-<url><loc>https://azizka.github.io/biomes/reference/biomes_show_rank.html</loc></url>
 <url><loc>https://azizka.github.io/biomes/reference/biomes_tab.html</loc></url>
 <url><loc>https://azizka.github.io/biomes/reference/biomes_visualise.html</loc></url>
 <url><loc>https://azizka.github.io/biomes/reference/index.html</loc></url>

@@ -1,4 +1,4 @@
-# Rank biome layers for a given occurrence dataset
+# Rank biome schemes for a given occurrence dataset
 
 Compares the biome classification layers for a user-supplied set of
 occurrences and proposes a single "best" layer for that dataset. Each
@@ -10,7 +10,7 @@ one `composite_score`, which drives the ranking.
 ``` r
 biomes_rank(
   x,
-  layer = NULL,
+  scheme = NULL,
   biome = NULL,
   lon = "decimalLongitude",
   lat = "decimalLatitude",
@@ -30,18 +30,19 @@ biomes_rank(
   [`terra::SpatVector`](https://rspatial.github.io/terra/reference/SpatVector-class.html)
   of point geometries.
 
-- layer:
+- scheme:
 
-  Optional integer vector in `1:31` to restrict the ranking to a subset
-  of the packaged layers (e.g. `layer = c(1, 5, 25)`). `NULL` (default)
-  ranks all 31 layers. Ignored when `biome` is supplied.
+  Optional integer vector in `1:31` (biome scheme numbers) to restrict
+  the ranking to a subset of the packaged schemes (e.g.
+  `scheme = c(1, 5, 25)`). `NULL` (default) ranks all 31 schemes.
+  Ignored when `biome` is supplied.
 
 - biome:
 
   Optional
   [`terra::SpatRaster`](https://rspatial.github.io/terra/reference/SpatRaster-class.html)
-  stack of biome layers. Use this for custom rasters; for the packaged
-  stack prefer `layer = <int>` instead.
+  stack of biome schemes. Use this for custom rasters; for the packaged
+  stack prefer `scheme = <int>` instead.
 
 - lon:
 
@@ -78,7 +79,7 @@ biomes_rank(
   recent publication ranks higher), `"classes"` (more classes ranks
   higher), or `"none"` (do not break ties; tied layers share a rank,
   dense ranking). With `"year"` and `"classes"` the other key serves as
-  a further fallback, alphabetical `layer_name` resolves any remaining
+  a further fallback, alphabetical `scheme_name` resolves any remaining
   ties, and ranks are strict 1..N. With `"none"` multiple layers may
   carry `is_best = TRUE`.
 
@@ -135,14 +136,14 @@ data("biomes_example")
 # Default call: coverage + effective_classes + granularity, equally weighted
 r <- biomes_rank(biomes_example, verbose = FALSE)
 head(r)
-#>   layer
-#> 1     1
-#> 2     2
-#> 3     3
-#> 4     4
-#> 5     5
-#> 6     6
-#>                                                                                                                   layer_name
+#>   scheme
+#> 1      1
+#> 2      2
+#> 3      3
+#> 4      4
+#> 5      5
+#> 6      6
+#>                                                                                                                  scheme_name
 #> 1                                                                       Global vegetation patterns of the past 140,000 years
 #> 2                                                  Dataset of the global component of the Copernicus Land Monitoring Service
 #> 3                                            Present and future Köppen-Geiger climate classification maps at 1-km resolution
@@ -170,7 +171,7 @@ head(r)
 #> 4          0.7000000       0.6498408   20   FALSE
 #> 5          1.0000000       0.6933362   13   FALSE
 #> 6          1.0000000       0.3763122   29   FALSE
-attr(r, "best_layer")
+attr(r, "best_scheme")
 #> [1] 16
 
 # Restrict to a subset of criteria

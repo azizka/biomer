@@ -9,7 +9,7 @@ data frame corresponds to one row (one occurrence record) of `x`.
 ``` r
 biomes_classify(
   x,
-  layer = NULL,
+  scheme = NULL,
   biome = NULL,
   lon = "decimalLongitude",
   lat = "decimalLatitude",
@@ -29,18 +29,19 @@ biomes_classify(
   [`terra::SpatVector`](https://rspatial.github.io/terra/reference/SpatVector-class.html)
   of point geometries.
 
-- layer:
+- scheme:
 
-  Integer vector in `1:31` selecting one or more layers from the
-  packaged biome stack (e.g. `layer = 1` or `layer = c(1, 25)`). Ignored
-  when `biome` is supplied. Defaults to `NULL`, meaning *all* 31 layers.
+  Integer vector in `1:31` selecting one or more biome schemes (biome
+  scheme numbers) from the packaged stack (e.g. `scheme = 1` or
+  `scheme = c(1, 25)`). Ignored when `biome` is supplied. Defaults to
+  `NULL`, meaning *all* 31 schemes.
 
 - biome:
 
   Optional
   [`terra::SpatRaster`](https://rspatial.github.io/terra/reference/SpatRaster-class.html)
-  with one or more biome layers. Use this for custom rasters; for the
-  packaged stack prefer `layer = <int>`.
+  with one or more biome schemes. Use this for custom rasters; for the
+  packaged stack prefer `scheme = <int>`.
 
 - lon:
 
@@ -100,7 +101,7 @@ data("biomes_example")
 
 # Default: classify against all 31 layers and append the result to x
 biomes_classify(biomes_example)
-#> no biome file or layer provided using default biomes
+#> no biome file or scheme provided using default biomes
 #> Downloading biome raster stack (~36 MB) to:
 #>   /home/runner/.cache/R/biomes/Biomes_Inventory_RasterStack.tif
 #> This happens only once; the file is cached for future use.
@@ -72367,8 +72368,8 @@ biomes_classify(biomes_example)
 #> 2777                                                                   Nemoral
 #>  [ reached 'max' / getOption("max.print") -- omitted 26327 rows ]
 
-# Single layer, both raster value and biome name
-biomes_classify(biomes_example, layer = 1, value = "both")
+# Single scheme, both raster value and biome name
+biomes_classify(biomes_example, scheme = 1, value = "both")
 #> Coordinates provided as data.frame, assuming WGS84 as CRS.
 #> Classified 29104 record(s) against 1 biome layer(s):
 #>   - Biome_Inventory_layer_01 (Allen et al., 2020)
@@ -115232,8 +115233,8 @@ biomes_classify(biomes_example, layer = 1, value = "both")
 #> 14285          Temperate summergreen forest
 #>  [ reached 'max' / getOption("max.print") -- omitted 14819 rows ]
 
-# Multiple layers
-biomes_classify(biomes_example, layer = c(1, 25))
+# Multiple schemes
+biomes_classify(biomes_example, scheme = c(1, 25))
 #> Coordinates provided as data.frame, assuming WGS84 as CRS.
 #> Classified 29104 record(s) against 2 biome layer(s):
 #>   - Biome_Inventory_layer_01 (Allen et al., 2020)
@@ -158099,7 +158100,7 @@ biomes_classify(biomes_example, layer = c(1, 25))
 #>  [ reached 'max' / getOption("max.print") -- omitted 14819 rows ]
 
 # Return only the classification columns (old default behaviour)
-biomes_classify(biomes_example, layer = 1, append = FALSE)
+biomes_classify(biomes_example, scheme = 1, append = FALSE)
 #> Coordinates provided as data.frame, assuming WGS84 as CRS.
 #> Classified 29104 record(s) against 1 biome layer(s):
 #>   - Biome_Inventory_layer_01 (Allen et al., 2020)

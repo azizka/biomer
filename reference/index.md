@@ -31,28 +31,25 @@ Download and clean GBIF occurrences for a taxon.
 - [`biomes_tab()`](https://azizka.github.io/biomes/reference/biomes_tab.md)
   : Tabulate the number of occurrences per biome
 
-## Rank biome layers for a dataset
+## Rank biome schemes for a dataset
 
-Data-driven scoring of the 31 biome layers for a given occurrence set.
+Data-driven scoring of the 31 biome schemes for a given occurrence set.
 
 - [`biomes_rank()`](https://azizka.github.io/biomes/reference/biomes_rank.md)
-  : Rank biome layers for a given occurrence dataset
+  : Rank biome schemes for a given occurrence dataset
 
-- [`biomes_show_rank()`](https://azizka.github.io/biomes/reference/biomes_show_rank.md)
-  :
+## Visualise
 
-  Visualise a `biomes_rank` result
-
-## Visualize
-
-Map occurrence records over a chosen biome layer.
+Ranking, occurrence map and biome-class composition for a chosen scheme.
 
 - [`biomes_visualise()`](https://azizka.github.io/biomes/reference/biomes_visualise.md)
-  : Map occurrences over a biome layer
+  : Visualise the biomes workflow (ranking, map and biome-class
+  composition)
 
 ## One-call workflow
 
 Single-call wrapper from taxon or dataset to table + map.
 
 - [`biomes_full()`](https://azizka.github.io/biomes/reference/biomes_full.md)
-  : One-call workflow: from taxon (or dataset) to table + map
+  : One-call workflow: from taxon (or dataset) to table (and optional
+  figure)

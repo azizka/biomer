@@ -1,4 +1,4 @@
-# One-call workflow: from taxon (or dataset) to table + map
+# One-call workflow: from taxon (or dataset) to table (and optional figure)
 
 Convenience wrapper that runs the full `biomes` workflow in a single
 call. There are two entry paths:
@@ -9,10 +9,11 @@ call. There are two entry paths:
 biomes_full(
   x = NULL,
   taxon = NULL,
-  layer = "best",
+  scheme = "best",
   lon = "decimalLongitude",
   lat = "decimalLatitude",
   value = "name",
+  plot = "none",
   show = FALSE,
   ...
 )
@@ -32,11 +33,15 @@ biomes_full(
   Optional scientific name (species, genus, family, ...). Mutually
   exclusive with `x`.
 
-- layer:
+- scheme:
 
-  Either an integer in `1:31` to force a specific layer, or `"best"`
-  (default) to pick the best layer via
-  [`biomes_rank()`](https://azizka.github.io/biomes/reference/biomes_rank.md).
+  One of: an integer in `1:31` (biome scheme number) to force a specific
+  scheme; `"best"` (default) to pick the best-fitting scheme across all
+  31 via
+  [`biomes_rank()`](https://azizka.github.io/biomes/reference/biomes_rank.md);
+  or a scheme type (`"climate"`, `"vegetation"`, `"land_cover"`,
+  `"ecoregion"`, `"integrative"`, `"anthropogenic"`) to pick the
+  best-fitting scheme within that methodological group.
 
 - lon, lat:
 
@@ -49,11 +54,23 @@ biomes_full(
   [`biomes_classify()`](https://azizka.github.io/biomes/reference/biomes_classify.md):
   `"name"` (default), `"ID"`, or `"both"`.
 
+- plot:
+
+  Which figure(s)
+  [`biomes_visualise()`](https://azizka.github.io/biomes/reference/biomes_visualise.md)
+  should build. `"none"` (default): no figure (the fastest option).
+  `"all"`: the combined, lettered figure (rank + map + barplot) in
+  `$plot`. A subset of `c("rank", "map", "barplot")`: the requested
+  panels are returned **individually** (no panel letters) in `$rank`,
+  `$map` and `$barplot` – e.g. `plot = c("rank", "map", "barplot")`
+  fills all three, `plot = "map"` fills only `$map`. `NULL` is accepted
+  as an alias for `"none"`.
+
 - show:
 
-  Logical. If `TRUE`, print the map and the tabulation to the console as
-  a side effect. The function always returns its result invisibly.
-  Default: `FALSE`.
+  Logical. If `TRUE`, print the figure (if any) and the tabulation to
+  the console as a side effect. The function always returns its result
+  invisibly. Default: `FALSE`.
 
 - ...:
 
@@ -70,13 +87,14 @@ Invisibly, a `biomes_full` list with elements:
 
   The occurrence data frame (downloaded or provided).
 
-- `layer`:
+- `scheme`:
 
-  The chosen layer index.
+  The chosen biome scheme number.
 
 - `ranking`:
 
-  The ranking data frame (only when `layer = "best"`), otherwise `NULL`.
+  The ranking data frame (only when `scheme = "best"`), otherwise
+  `NULL`.
 
 - `classified`:
 
@@ -88,10 +106,15 @@ Invisibly, a `biomes_full` list with elements:
   The biome occurrence table from
   [`biomes_tab()`](https://azizka.github.io/biomes/reference/biomes_tab.md).
 
-- `map`:
+- `plot`:
 
-  The `ggplot`/`cowplot` map from
-  [`biomes_visualise()`](https://azizka.github.io/biomes/reference/biomes_visualise.md).
+  The combined, lettered figure (only when `plot = "all"`), otherwise
+  `NULL`.
+
+- `rank`, `map`, `barplot`:
+
+  The individual panels (no letters), each present only when requested
+  via `plot = c(...)`, otherwise `NULL`.
 
 ## Details
 
@@ -107,10 +130,10 @@ Invisibly, a `biomes_full` list with elements:
 
 Once occurrences are available the function:
 
-- picks the biome layer (either `layer = <integer>` or, with the default
-  `layer = "best"`, by running
+- picks the biome scheme (either `scheme = <integer>` or, with the
+  default `scheme = "best"`, by running
   [`biomes_rank()`](https://azizka.github.io/biomes/reference/biomes_rank.md)
-  and selecting the top-1 layer);
+  and selecting the top-1 scheme);
 
 - classifies the records with
   [`biomes_classify()`](https://azizka.github.io/biomes/reference/biomes_classify.md);
@@ -118,8 +141,9 @@ Once occurrences are available the function:
 - tabulates them with
   [`biomes_tab()`](https://azizka.github.io/biomes/reference/biomes_tab.md);
 
-- draws an occurrence map with
-  [`biomes_visualise()`](https://azizka.github.io/biomes/reference/biomes_visualise.md).
+- optionally builds a figure with
+  [`biomes_visualise()`](https://azizka.github.io/biomes/reference/biomes_visualise.md)
+  (controlled by `plot`; skipped by default for speed).
 
 ## Examples
 
@@ -128,13 +152,22 @@ if (FALSE) { # \dontrun{
 # Path 1: from a taxon name (downloads via GBIF)
 res <- biomes_full(taxon = "Fagus sylvatica", limit = 2000)
 res$table
-res$map
 
-# Path 2: from an existing data frame, pick the best layer
+# Path 2: from an existing data frame, pick the best scheme
 data("biomes_example")
-res <- biomes_full(x = biomes_example, layer = "best")
+res <- biomes_full(x = biomes_example, scheme = "best")
 
-# Path 2 with a fixed layer
-res <- biomes_full(x = biomes_example, layer = 1)
+# Path 2 with a fixed scheme
+res <- biomes_full(x = biomes_example, scheme = 1)
+
+# Path 2, best-fitting scheme within the vegetation group,
+# and build the full figure
+res <- biomes_full(x = biomes_example, scheme = "vegetation", plot = "all")
+res$plot
+
+# individual panels (no a-c letters) in $rank / $map / $barplot
+res <- biomes_full(x = biomes_example, plot = c("map", "barplot"))
+res$map
+res$barplot
 } # }
 ```

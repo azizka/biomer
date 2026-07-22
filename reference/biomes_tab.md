@@ -25,8 +25,8 @@ biomes_tab(x, value = "names")
 
 ## Value
 
-A data frame with columns `layer`, `biome`, and `n` (the number of
-occurrence records in that biome on that layer).
+A data frame with columns `scheme`, `biome`, and `n` (the number of
+occurrence records in that biome class on that scheme).
 
 ## Details
 
@@ -49,7 +49,7 @@ classified_names <- biomes_classify(
   x     = biomes_example,
   value = "name"
 )
-#> no biome file or layer provided using default biomes
+#> no biome file or scheme provided using default biomes
 #> Coordinates provided as data.frame, assuming WGS84 as CRS.
 #> Classified 29104 record(s) against 31 biome layer(s):
 #>   - Biome_Inventory_layer_01 (Allen et al., 2020)
@@ -84,7 +84,7 @@ classified_names <- biomes_classify(
 #>   - Biome_Inventory_layer_30 (Whittaker, 1975)
 #>   - Biome_Inventory_layer_31 (Walter, 1964, 1968; Walter & Breckle, 1970; Breckle & Rafiqpoor, 2019)
 biomes_tab(classified_names, value = "names")
-#>                        layer
+#>                       scheme
 #> 1   Biome_Inventory_layer_01
 #> 2   Biome_Inventory_layer_01
 #> 3   Biome_Inventory_layer_01
@@ -1995,7 +1995,7 @@ classified_ids <- biomes_classify(
   x     = biomes_example,
   value = "ID"
 )
-#> no biome file or layer provided using default biomes
+#> no biome file or scheme provided using default biomes
 #> Coordinates provided as data.frame, assuming WGS84 as CRS.
 #> Classified 29104 record(s) against 31 biome layer(s):
 #>   - Biome_Inventory_layer_01 (Allen et al., 2020)
@@ -2030,7 +2030,7 @@ classified_ids <- biomes_classify(
 #>   - Biome_Inventory_layer_30 (Whittaker, 1975)
 #>   - Biome_Inventory_layer_31 (Walter, 1964, 1968; Walter & Breckle, 1970; Breckle & Rafiqpoor, 2019)
 biomes_tab(classified_ids, value = "ID")
-#>                        layer biome     n
+#>                       scheme biome     n
 #> 1   Biome_Inventory_layer_01     1  1860
 #> 2   Biome_Inventory_layer_01     2   824
 #> 3   Biome_Inventory_layer_01     3   447
