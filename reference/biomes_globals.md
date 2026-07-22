@@ -30,3 +30,7 @@ Authors:
 - Hans Christian Groß <hc.gross@gmx.de>
 
 - Alexander Zizka <alexander.zizka@biologie.uni-marburg.de> \[funder\]
+
+- Anna Walentowitz
+
+- Jan-Christopher Fischer
