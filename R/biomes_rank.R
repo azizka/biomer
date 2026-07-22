@@ -1,4 +1,4 @@
-#' Rank biome layers for a given occurrence dataset
+#' Rank biome schemes for a given occurrence dataset
 #'
 #' Compares the biome classification layers for a user-supplied set of
 #' occurrences and proposes a single "best" layer for that dataset. Each
@@ -41,13 +41,13 @@
 #'
 #' @param x A data frame with longitude / latitude columns, an `sf`
 #'   spatial object, or a `terra::SpatVector` of point geometries.
-#' @param layer Optional integer vector in `1:31` to restrict the ranking
-#'   to a subset of the packaged layers (e.g. `layer = c(1, 5, 25)`).
-#'   `NULL` (default) ranks all 31 layers. Ignored when `biome` is
-#'   supplied.
-#' @param biome Optional `terra::SpatRaster` stack of biome layers. Use
+#' @param scheme Optional integer vector in `1:31` (biome scheme numbers)
+#'   to restrict the ranking to a subset of the packaged schemes (e.g.
+#'   `scheme = c(1, 5, 25)`). `NULL` (default) ranks all 31 schemes.
+#'   Ignored when `biome` is supplied.
+#' @param biome Optional `terra::SpatRaster` stack of biome schemes. Use
 #'   this for custom rasters; for the packaged stack prefer
-#'   `layer = <int>` instead.
+#'   `scheme = <int>` instead.
 #' @param lon Column name of longitude in `x` (only used if `x` is a
 #'   non-spatial data frame). Default `"decimalLongitude"`.
 #' @param lat Column name of latitude in `x` (only used if `x` is a
@@ -67,7 +67,7 @@
 #'   (default, more recent publication ranks higher), `"classes"` (more
 #'   classes ranks higher), or `"none"` (do not break ties; tied layers
 #'   share a rank, dense ranking). With `"year"` and `"classes"` the
-#'   other key serves as a further fallback, alphabetical `layer_name`
+#'   other key serves as a further fallback, alphabetical `scheme_name`
 #'   resolves any remaining ties, and ranks are strict 1..N. With
 #'   `"none"` multiple layers may carry `is_best = TRUE`.
 #' @param verbose Logical. Print progress messages? Default `TRUE`.
@@ -81,7 +81,7 @@
 #' # Default call: coverage + effective_classes + granularity, equally weighted
 #' r <- biomes_rank(biomes_example, verbose = FALSE)
 #' head(r)
-#' attr(r, "best_layer")
+#' attr(r, "best_scheme")
 #'
 #' # Restrict to a subset of criteria
 #' r2 <- biomes_rank(
@@ -94,7 +94,7 @@
 #' @export
 biomes_rank <- function(
     x,
-    layer      = NULL,
+    scheme     = NULL,
     biome      = NULL,
     lon         = "decimalLongitude",
     lat         = "decimalLatitude",
@@ -117,17 +117,17 @@ biomes_rank <- function(
   if (!is.null(biome)) {
     checkmate::assert_class(biome, "SpatRaster")
   }
-  if (!is.null(layer)) {
-    checkmate::assert_integerish(layer, lower = 1L, upper = 31L,
+  if (!is.null(scheme)) {
+    checkmate::assert_integerish(scheme, lower = 1L, upper = 31L,
                                  any.missing = FALSE, min.len = 1L,
-                                 .var.name = "layer")
+                                 .var.name = "scheme")
     if (!is.null(biome)) {
-      warning("`layer` is ignored because `biome` was supplied.",
+      warning("`scheme` is ignored because `biome` was supplied.",
               call. = FALSE)
     }
   }
 
-  # ---- scheme_type: restrict to one methodological group of layers --------
+  # ---- scheme_type: restrict to one methodological group of schemes -------
   scheme_types <- c("all", "climate", "vegetation", "land_cover",
                     "ecoregion", "integrative", "anthropogenic")
   checkmate::assert_choice(scheme_type, scheme_types, .var.name = "scheme_type")
@@ -142,12 +142,12 @@ biomes_rank <- function(
       }
       type_layers <- which(biomes::biomes_information$scheme_type == scheme_type)
       if (length(type_layers) == 0L) {
-        stop("No layers found for scheme_type = '", scheme_type, "'.",
+        stop("No schemes found for scheme_type = '", scheme_type, "'.",
              call. = FALSE)
       }
-      layer <- if (is.null(layer)) type_layers else intersect(layer, type_layers)
-      if (length(layer) == 0L) {
-        stop("`layer` and `scheme_type` together select no layers.",
+      scheme <- if (is.null(scheme)) type_layers else intersect(scheme, type_layers)
+      if (length(scheme) == 0L) {
+        stop("`scheme` and `scheme_type` together select no schemes.",
              call. = FALSE)
       }
     }
@@ -182,9 +182,9 @@ biomes_rank <- function(
 
   # ---------------------------------------------------------- classify
   if (verbose) message("Classifying ", n_total,
-                       " record(s) against biome layers ...")
+                       " record(s) against biome schemes ...")
   ids <- suppressMessages(suppressWarnings(
-    biomes_classify(x, layer = layer, biome = biome,
+    biomes_classify(x, scheme = scheme, biome = biome,
                     lon = lon, lat = lat,
                     value = "ID", append = FALSE, na = NA)
   ))
@@ -265,9 +265,9 @@ biomes_rank <- function(
   }, numeric(1))
 
   out <- data.frame(
-    layer      = layer_idx,
-    layer_name = info$layer_name,
-    year       = info$year,
+    scheme      = layer_idx,
+    scheme_name = info$layer_name,
+    year        = info$year,
     n_total    = vapply(per_layer, `[[`, integer(1), "n_total"),
     n_hit      = vapply(per_layer, `[[`, integer(1), "n_hit"),
     n_na       = vapply(per_layer, `[[`, integer(1), "n_na"),
@@ -282,139 +282,23 @@ biomes_rank <- function(
 
   # ranks + tiebreaker on rank 1
   out <- .apply_tiebreaker(out, tiebreaker)
-  best_layer <- out$layer[out$is_best][1]
+  best_scheme <- out$scheme[out$is_best][1]
 
   attr(out, "criteria")    <- criteria
   attr(out, "tiebreaker")  <- tiebreaker
-  attr(out, "best_layer")  <- best_layer
+  attr(out, "best_scheme") <- best_scheme
   attr(out, "scheme_type") <- scheme_type
   class(out) <- c("biomes_rank", "data.frame")
 
   if (verbose) {
     message(sprintf(
-      "Best layer: %s -- %s (composite = %.3f)",
-      best_layer,
-      out$layer_name[out$is_best][1],
+      "Best scheme: %s, %s (composite = %.3f)",
+      best_scheme,
+      out$scheme_name[out$is_best][1],
       out$composite_score[out$is_best][1]
     ))
   }
   out
-}
-
-
-#' Visualise a `biomes_rank` result
-#'
-#' Builds a `ggplot` from the data frame returned by [biomes_rank()].
-#'
-#' @param ranked A `biomes_rank` object returned by [biomes_rank()].
-#' @param type One of `"composite"` (default, horizontal bar plot of
-#'   `composite_score` with the top-1 layer highlighted), `"na"`
-#'   (percent-NA per layer, sorted ascending), or `"criteria"` (heatmap
-#'   of all scaled criteria per layer).
-#'
-#' @examples
-#' data("biomes_example")
-#' \donttest{
-#' # biomes_rank() downloads and caches the biome raster (~36 MB).
-#' r <- biomes_rank(biomes_example, verbose = FALSE)
-#' biomes_show_rank(r, type = "composite")
-#' biomes_show_rank(r, type = "na")
-#' biomes_show_rank(r, type = "criteria")
-#' }
-#'
-#' @export
-biomes_show_rank <- function(ranked, type = c("composite", "na", "criteria")) {
-  checkmate::assert_class(ranked, "biomes_rank")
-  type <- match.arg(type)
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package 'ggplot2' is required for biomes_show_rank(). ",
-         "Install it with install.packages('ggplot2').", call. = FALSE)
-  }
-
-  df <- as.data.frame(ranked)
-  df$layer_id  <- as.character(df$layer)
-  df$bar_label <- sprintf("%s (%s%% NA, %s)",
-                          df$layer_id,
-                          format(df$pct_na, nsmall = 1),
-                          ifelse(is.na(df$year), "n/a", df$year))
-
-  if (type == "composite") {
-    df <- df[order(df$composite_score, na.last = FALSE), , drop = FALSE]
-    df$bar_label <- factor(df$bar_label, levels = df$bar_label)
-    p <- ggplot2::ggplot(
-      df,
-      ggplot2::aes(x = .data$composite_score,
-                   y = .data$bar_label,
-                   fill = .data$is_best)
-    ) +
-      ggplot2::geom_col() +
-      ggplot2::scale_fill_manual(
-        values = c(`TRUE` = "#1b9e77", `FALSE` = "grey70"),
-        guide  = "none"
-      ) +
-      ggplot2::labs(
-        x = "Composite score",
-        y = NULL,
-        title = "Composite score per biome layer",
-        subtitle = sprintf("Best: layer %s -- %s",
-                           attr(ranked, "best_layer"),
-                           df$layer_name[df$is_best][1])
-      ) +
-      ggplot2::theme_minimal(base_size = 11)
-    return(p)
-  }
-
-  if (type == "na") {
-    df <- df[order(df$pct_na), , drop = FALSE]
-    df$bar_label <- factor(df$bar_label, levels = rev(df$bar_label))
-    p <- ggplot2::ggplot(
-      df,
-      ggplot2::aes(x = .data$pct_na, y = .data$bar_label)
-    ) +
-      ggplot2::geom_col(fill = "grey55") +
-      ggplot2::labs(
-        x = "Records not classified (% NA)",
-        y = NULL,
-        title = "Coverage gap per biome layer"
-      ) +
-      ggplot2::theme_minimal(base_size = 11)
-    return(p)
-  }
-
-  # type == "criteria"
-  criteria <- attr(ranked, "criteria")
-  scaled_cols <- paste0(criteria, "_scaled")
-  long <- do.call(rbind, lapply(seq_along(criteria), function(i) {
-    data.frame(
-      layer_id  = df$layer_id,
-      bar_label = df$bar_label,
-      criterion = criteria[i],
-      value     = df[[scaled_cols[i]]],
-      stringsAsFactors = FALSE
-    )
-  }))
-  # order layers by composite for a readable heatmap
-  ord <- df$bar_label[order(df$composite_score)]
-  long$bar_label <- factor(long$bar_label, levels = ord)
-  long$criterion <- factor(long$criterion, levels = criteria)
-
-  p <- ggplot2::ggplot(
-    long,
-    ggplot2::aes(x = .data$criterion, y = .data$bar_label,
-                 fill = .data$value)
-  ) +
-    ggplot2::geom_tile(colour = "white") +
-    ggplot2::scale_fill_gradient(
-      low = "#f7fbff", high = "#08306b", na.value = "grey90",
-      limits = c(0, 1), name = "Scaled\nscore"
-    ) +
-    ggplot2::labs(
-      x = NULL, y = NULL,
-      title = "Scaled criterion scores per biome layer"
-    ) +
-    ggplot2::theme_minimal(base_size = 11) +
-    ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 30, hjust = 1))
-  p
 }
 
 
@@ -570,7 +454,7 @@ biomes_show_rank <- function(ranked, type = c("composite", "na", "criteria")) {
       -df$composite_score[non_na],
       -df$year[non_na],
       -cls[non_na],
-      df$layer_name[non_na],
+      df$scheme_name[non_na],
       na.last = TRUE
     )
   } else {  # "classes"
@@ -578,7 +462,7 @@ biomes_show_rank <- function(ranked, type = c("composite", "na", "criteria")) {
       -df$composite_score[non_na],
       -cls[non_na],
       -df$year[non_na],
-      df$layer_name[non_na],
+      df$scheme_name[non_na],
       na.last = TRUE
     )
   }
@@ -598,7 +482,7 @@ biomes_show_rank <- function(ranked, type = c("composite", "na", "criteria")) {
 #' @keywords internal
 #' @noRd
 .total_classes_from_df <- function(df) {
-  k <- df$layer
+  k <- df$scheme
   leg <- biomes::biomes_legend
   out <- rep(NA_integer_, length(k))
   ok <- !is.na(k) & k >= 1 & k <= nrow(leg)
@@ -616,7 +500,7 @@ biomes_show_rank <- function(ranked, type = c("composite", "na", "criteria")) {
 #' @noRd
 .empty_rank <- function(criteria, tiebreaker) {
   base <- data.frame(
-    layer = integer(), layer_name = character(), year = integer(),
+    scheme = integer(), scheme_name = character(), year = integer(),
     n_total = integer(), n_hit = integer(), n_na = integer(),
     pct_na = numeric(),
     stringsAsFactors = FALSE
@@ -630,7 +514,7 @@ biomes_show_rank <- function(ranked, type = c("composite", "na", "criteria")) {
   base$is_best         <- logical()
   attr(base, "criteria")   <- criteria
   attr(base, "tiebreaker") <- tiebreaker
-  attr(base, "best_layer") <- NA_integer_
+  attr(base, "best_scheme") <- NA_integer_
   class(base) <- c("biomes_rank", "data.frame")
   base
 }

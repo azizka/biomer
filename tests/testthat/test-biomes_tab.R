@@ -12,7 +12,7 @@ test_that("biomes_tab works on single-layer ID output (issue #65)", {
 
   tab <- biomes_tab(out, value = "ID")
   expect_s3_class(tab, "data.frame")
-  expect_equal(names(tab), c("layer", "biome", "n"))
+  expect_equal(names(tab), c("scheme", "biome", "n"))
 })
 
 test_that("biomes_tab works on multi-layer name output", {
@@ -28,8 +28,8 @@ test_that("biomes_tab works on multi-layer name output", {
   ))
 
   tab <- biomes_tab(out, value = "names")
-  expect_equal(names(tab), c("layer", "biome", "n"))
-  expect_true(length(unique(tab$layer)) >= 1)
+  expect_equal(names(tab), c("scheme", "biome", "n"))
+  expect_true(length(unique(tab$scheme)) >= 1)
 })
 
 test_that("biomes_tab errors when required columns are missing", {

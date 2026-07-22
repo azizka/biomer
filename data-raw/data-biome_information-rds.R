@@ -16,7 +16,7 @@ names(biomes_information) <- c(
   "name_of_classification",
   "criteria_for_class_assignment",
   "methodology",
-  "layer_in_raster_stack",
+  "scheme_number",
   "background_and_specifications",
   "number_of_classes_zonal_azonal",
   "cover_deviation_percent",

@@ -2,11 +2,11 @@
 % Please edit documentation in R/biomes_rank.R
 \name{biomes_rank}
 \alias{biomes_rank}
-\title{Rank biome layers for a given occurrence dataset}
+\title{Rank biome schemes for a given occurrence dataset}
 \usage{
 biomes_rank(
   x,
-  layer = NULL,
+  scheme = NULL,
   biome = NULL,
   lon = "decimalLongitude",
   lat = "decimalLatitude",
@@ -20,14 +20,14 @@ biomes_rank(
 \item{x}{A data frame with longitude / latitude columns, an \code{sf}
 spatial object, or a \code{terra::SpatVector} of point geometries.}
 
-\item{layer}{Optional integer vector in \code{1:31} to restrict the ranking
-to a subset of the packaged layers (e.g. \code{layer = c(1, 5, 25)}).
-\code{NULL} (default) ranks all 31 layers. Ignored when \code{biome} is
-supplied.}
+\item{scheme}{Optional integer vector in \code{1:31} (biome scheme numbers)
+to restrict the ranking to a subset of the packaged schemes (e.g.
+\code{scheme = c(1, 5, 25)}). \code{NULL} (default) ranks all 31 schemes.
+Ignored when \code{biome} is supplied.}
 
-\item{biome}{Optional \code{terra::SpatRaster} stack of biome layers. Use
+\item{biome}{Optional \code{terra::SpatRaster} stack of biome schemes. Use
 this for custom rasters; for the packaged stack prefer
-\verb{layer = <int>} instead.}
+\verb{scheme = <int>} instead.}
 
 \item{lon}{Column name of longitude in \code{x} (only used if \code{x} is a
 non-spatial data frame). Default \code{"decimalLongitude"}.}
@@ -52,7 +52,7 @@ within that group. Ignored when \code{biome} is supplied.}
 (default, more recent publication ranks higher), \code{"classes"} (more
 classes ranks higher), or \code{"none"} (do not break ties; tied layers
 share a rank, dense ranking). With \code{"year"} and \code{"classes"} the
-other key serves as a further fallback, alphabetical \code{layer_name}
+other key serves as a further fallback, alphabetical \code{scheme_name}
 resolves any remaining ties, and ranks are strict 1..N. With
 \code{"none"} multiple layers may carry \code{is_best = TRUE}.}
 
@@ -108,7 +108,7 @@ data("biomes_example")
 # Default call: coverage + effective_classes + granularity, equally weighted
 r <- biomes_rank(biomes_example, verbose = FALSE)
 head(r)
-attr(r, "best_layer")
+attr(r, "best_scheme")
 
 # Restrict to a subset of criteria
 r2 <- biomes_rank(

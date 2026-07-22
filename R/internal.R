@@ -23,7 +23,7 @@ info_grabber <- function(num) {
 
   cat(sprintf("\nName: %s (%s)\n", out$name_of_classification, out$publication))
   cat("\n")
-  cat(sprintf("Layer in raster stack: %s\n", out$layer_in_raster_stack))
+  cat(sprintf("Biome scheme number: %s\n", out$scheme_number))
   cat("\n")
   cat(sprintf("Criteria: %s\n", out$criteria_for_class_assignment))
   cat("\n")
@@ -31,7 +31,7 @@ info_grabber <- function(num) {
   cat("\n")
   cat(sprintf("Description: %s\n", out$background_and_specifications))
   cat("\n")
-  cat(sprintf("Number of biomes: %s\n", out$number_of_classes_zonal_azonal))
+  cat(sprintf("Number of biome classes: %s\n", out$number_of_classes_zonal_azonal))
   cat("\n")
   cat("Biome classes (raster value: name):\n")
   cat(biome_listing, "\n", sep = "")

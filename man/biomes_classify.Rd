@@ -6,7 +6,7 @@
 \usage{
 biomes_classify(
   x,
-  layer = NULL,
+  scheme = NULL,
   biome = NULL,
   lon = "decimalLongitude",
   lat = "decimalLatitude",
@@ -20,14 +20,14 @@ biomes_classify(
 \item{x}{A data frame (with longitude and latitude columns), an \code{sf}
 spatial object, or a \code{terra::SpatVector} of point geometries.}
 
-\item{layer}{Integer vector in \code{1:31} selecting one or more layers
-from the packaged biome stack (e.g. \code{layer = 1} or
-\code{layer = c(1, 25)}). Ignored when \code{biome} is supplied. Defaults to
-\code{NULL}, meaning \emph{all} 31 layers.}
+\item{scheme}{Integer vector in \code{1:31} selecting one or more biome
+schemes (biome scheme numbers) from the packaged stack (e.g.
+\code{scheme = 1} or \code{scheme = c(1, 25)}). Ignored when \code{biome} is
+supplied. Defaults to \code{NULL}, meaning \emph{all} 31 schemes.}
 
 \item{biome}{Optional \code{terra::SpatRaster} with one or more biome
-layers. Use this for custom rasters; for the packaged stack prefer
-\verb{layer = <int>}.}
+schemes. Use this for custom rasters; for the packaged stack prefer
+\verb{scheme = <int>}.}
 
 \item{lon}{Column name of longitude in \code{x} (only used if \code{x} is a
 non-spatial data frame). Default: "decimalLongitude".}
@@ -78,14 +78,14 @@ data("biomes_example")
 # Default: classify against all 31 layers and append the result to x
 biomes_classify(biomes_example)
 
-# Single layer, both raster value and biome name
-biomes_classify(biomes_example, layer = 1, value = "both")
+# Single scheme, both raster value and biome name
+biomes_classify(biomes_example, scheme = 1, value = "both")
 
-# Multiple layers
-biomes_classify(biomes_example, layer = c(1, 25))
+# Multiple schemes
+biomes_classify(biomes_example, scheme = c(1, 25))
 
 # Return only the classification columns (old default behaviour)
-biomes_classify(biomes_example, layer = 1, append = FALSE)
+biomes_classify(biomes_example, scheme = 1, append = FALSE)
 }
 
 }

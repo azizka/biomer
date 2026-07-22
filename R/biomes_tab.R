@@ -14,8 +14,8 @@
 #'   columns from [biomes_classify()]; `"ID"` tabulates the `_value`
 #'   columns.
 #'
-#' @return A data frame with columns `layer`, `biome`, and `n` (the number
-#'   of occurrence records in that biome on that layer).
+#' @return A data frame with columns `scheme`, `biome`, and `n` (the number
+#'   of occurrence records in that biome class on that scheme).
 #'
 #' @examples
 #' # Load example occurrence data
@@ -71,7 +71,7 @@ biomes_tab <- function(x,
       return(NULL)
     }
     data.frame(
-      layer = sub(paste0(suffix, "$"), "", names(dat)[i]),
+      scheme = sub(paste0(suffix, "$"), "", names(dat)[i]),
       biome = names(counts),
       n     = as.integer(counts),
       stringsAsFactors = FALSE

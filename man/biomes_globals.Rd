@@ -7,7 +7,16 @@
 \alias{biomes_globals}
 \title{Internal package setup for biomes}
 \description{
-Provides raster layers of 31 commonly used biome definitions (from Fischer and colleagues, 2022) \doi{10.1111/geb.13574} at 10x10 km resolution globally. Furthermore contains two functions to classify species occurrences and species into these biomes and visualize. Works with user-provided occurrences or a species name, in which case occurrences are downloaded from www.gbif.org and cleaned automatically.
+Reproducibly classifies occurrence records into biome classes using 31 published global terrestrial biome schemes compiled by Fischer and colleagues (2022) \doi{10.1111/geb.13574}, provided as harmonised raster layers at 10x10 km resolution globally. Includes functions to choose the most suitable biome scheme for a dataset by a data-driven ranking, to classify occurrence records, and to tabulate and visualise the result. Works with user-provided occurrences or a taxon name, in which case occurrences are downloaded from www.gbif.org and cleaned automatically.
+}
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://azizka.github.io/biomes/}
+  \item \url{https://github.com/azizka/biomes}
+  \item Report bugs at \url{https://github.com/azizka/biomes/issues}
+}
+
 }
 \author{
 \strong{Maintainer}: Hans Christian Groß \email{hc.gross@gmx.de}

@@ -6,18 +6,18 @@ Local check: 0 errors | 0 warnings | 0 notes
 (Windows 11, R 4.6.0, `devtools::check()`).
 
 win-builder check: 0 errors | 0 warnings | 1 note
-(both R-release 4.6.0 and R-devel; results identical).
+(both R-release and R-devel; results identical).
 
-NOTE: checking CRAN incoming feasibility ... [12s] NOTE
+NOTE: checking CRAN incoming feasibility ... NOTE
   Maintainer: 'Hans Christian Groß <hc.gross@gmx.de>'
-  
+
   New submission
 
 ## Test environments
 
 - local: Windows 11 x64, R 4.6.0 (`devtools::check()`)
-- win-builder: Windows Server 2022, R 4.6.0 (release)
-- win-builder: Windows Server 2022, R-devel (2026-06-03 r90099)
+- win-builder: Windows Server 2022, R-release
+- win-builder: Windows Server 2022, R-devel
 
 ## Notes from the win-builder check
 
@@ -32,6 +32,12 @@ New submission
 
 * **"New submission"** is expected. This is the first release of the
   package on CRAN.
+
+### NOTE 2 - possibly misspelled word
+
+The word "Reproducibly" (Title and Description) is flagged as possibly
+misspelled. It is a correctly spelled English adverb; this is a false
+positive.
 
 ## Note on the biome raster data (download on first use)
 
@@ -55,5 +61,3 @@ package, so the installed size stays well under CRAN's limit.
   offline), and vignette chunks that need it are evaluated only when
   the raster can be fetched. The package therefore builds and checks
   without network access on CRAN.
-
-

@@ -4,12 +4,12 @@ template:
   bootstrap: 5
 
 home:
-  title: 'biomes: 31 biome layers and utilities for biogeographic research'
+  title: 'biomes: An R package for reproducibly classifying occurrence records using 31 global biome schemes'
   description: >
-    biomes provides raster layers of 31 commonly used biome definitions
-    (Fischer et al, 2022) at 10x10 km resolution globally, plus
-    convenience functions to classify species occurrences into biomes,
-    summarize them and visualize.
+    biomes provides 31 published global terrestrial biome schemes (Fischer
+    et al. 2022) as harmonised raster layers at 10x10 km resolution, plus
+    functions to rank the schemes for a dataset, classify occurrence records
+    into biome classes, and tabulate and visualise the result.
 
 reference:
 - title: Biome data
@@ -29,13 +29,12 @@ reference:
   contents:
   - biomes_classify
   - biomes_tab
-- title: Rank biome layers for a dataset
-  desc: Data-driven scoring of the 31 biome layers for a given occurrence set.
+- title: Rank biome schemes for a dataset
+  desc: Data-driven scoring of the 31 biome schemes for a given occurrence set.
   contents:
   - biomes_rank
-  - biomes_show_rank
-- title: Visualize
-  desc: Map occurrence records over a chosen biome layer.
+- title: Visualise
+  desc: Ranking, occurrence map and biome-class composition for a chosen scheme.
   contents:
   - biomes_visualise
 - title: One-call workflow
@@ -44,9 +43,10 @@ reference:
   - biomes_full
 
 articles:
-- title: Get started
+- title: The four-step workflow
   navbar: ~
   contents:
-  - biome-data
-  - classify-summarize-map
-  - one-call-workflow
+  - step1-occurrence-records-and-biome-schemes
+  - step2-choosing-a-biome-scheme
+  - step3-occurrence-to-biome-classification
+  - step4-output-and-visualisation

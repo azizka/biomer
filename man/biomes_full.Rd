@@ -2,15 +2,16 @@
 % Please edit documentation in R/biomes_full.R
 \name{biomes_full}
 \alias{biomes_full}
-\title{One-call workflow: from taxon (or dataset) to table + map}
+\title{One-call workflow: from taxon (or dataset) to table (and optional figure)}
 \usage{
 biomes_full(
   x = NULL,
   taxon = NULL,
-  layer = "best",
+  scheme = "best",
   lon = "decimalLongitude",
   lat = "decimalLatitude",
   value = "name",
+  plot = "none",
   show = FALSE,
   ...
 )
@@ -23,8 +24,12 @@ with \code{taxon}.}
 \item{taxon}{Optional scientific name (species, genus, family, ...).
 Mutually exclusive with \code{x}.}
 
-\item{layer}{Either an integer in \code{1:31} to force a specific layer,
-or \code{"best"} (default) to pick the best layer via \code{\link[=biomes_rank]{biomes_rank()}}.}
+\item{scheme}{One of: an integer in \code{1:31} (biome scheme number) to
+force a specific scheme; \code{"best"} (default) to pick the best-fitting
+scheme across all 31 via \code{\link[=biomes_rank]{biomes_rank()}}; or a scheme type
+(\code{"climate"}, \code{"vegetation"}, \code{"land_cover"}, \code{"ecoregion"},
+\code{"integrative"}, \code{"anthropogenic"}) to pick the best-fitting scheme
+within that methodological group.}
 
 \item{lon, lat}{Column names of longitude / latitude in \code{x}
 (data frame only). Defaults \code{"decimalLongitude"}/\code{"decimalLatitude"}.}
@@ -32,9 +37,16 @@ or \code{"best"} (default) to pick the best layer via \code{\link[=biomes_rank]{
 \item{value}{Passed to \code{\link[=biomes_classify]{biomes_classify()}}: \code{"name"} (default),
 \code{"ID"}, or \code{"both"}.}
 
-\item{show}{Logical. If \code{TRUE}, print the map and the tabulation
-to the console as a side effect. The function always returns its
-result invisibly. Default: \code{FALSE}.}
+\item{plot}{Which figure(s) \code{\link[=biomes_visualise]{biomes_visualise()}} should build. \code{"none"}
+(default): no figure (the fastest option). \code{"all"}: the combined,
+lettered figure (rank + map + barplot) in \verb{$plot}. A subset of
+\code{c("rank", "map", "barplot")}: the requested panels are returned
+\strong{individually} (no panel letters) in \verb{$rank}, \verb{$map} and \verb{$barplot}
+-- e.g. \code{plot = c("rank", "map", "barplot")} fills all three, \code{plot = "map"} fills only \verb{$map}. \code{NULL} is accepted as an alias for \code{"none"}.}
+
+\item{show}{Logical. If \code{TRUE}, print the figure (if any) and the
+tabulation to the console as a side effect. The function always
+returns its result invisibly. Default: \code{FALSE}.}
 
 \item{...}{Further arguments passed to \code{\link[=biomes_occ]{biomes_occ()}} when
 \code{taxon} is given (e.g. \code{limit}, \code{year_min}, \code{year_max},
@@ -44,12 +56,16 @@ result invisibly. Default: \code{FALSE}.}
 Invisibly, a \code{biomes_full} list with elements:
 \describe{
 \item{\code{occ}}{The occurrence data frame (downloaded or provided).}
-\item{\code{layer}}{The chosen layer index.}
-\item{\code{ranking}}{The ranking data frame (only when \code{layer = "best"}),
+\item{\code{scheme}}{The chosen biome scheme number.}
+\item{\code{ranking}}{The ranking data frame (only when \code{scheme = "best"}),
 otherwise \code{NULL}.}
 \item{\code{classified}}{The output of \code{\link[=biomes_classify]{biomes_classify()}}.}
 \item{\code{table}}{The biome occurrence table from \code{\link[=biomes_tab]{biomes_tab()}}.}
-\item{\code{map}}{The \code{ggplot}/\code{cowplot} map from \code{\link[=biomes_visualise]{biomes_visualise()}}.}
+\item{\code{plot}}{The combined, lettered figure (only when \code{plot = "all"}),
+otherwise \code{NULL}.}
+\item{\code{rank}, \code{map}, \code{barplot}}{The individual panels (no letters),
+each present only when requested via \code{plot = c(...)}, otherwise
+\code{NULL}.}
 }
 }
 \description{
@@ -68,12 +84,13 @@ or \code{terra::SpatVector} as \code{x} (\code{taxon = NULL}).
 
 Once occurrences are available the function:
 \itemize{
-\item picks the biome layer (either \verb{layer = <integer>} or, with the
-default \code{layer = "best"}, by running \code{\link[=biomes_rank]{biomes_rank()}} and
-selecting the top-1 layer);
+\item picks the biome scheme (either \verb{scheme = <integer>} or, with the
+default \code{scheme = "best"}, by running \code{\link[=biomes_rank]{biomes_rank()}} and
+selecting the top-1 scheme);
 \item classifies the records with \code{\link[=biomes_classify]{biomes_classify()}};
 \item tabulates them with \code{\link[=biomes_tab]{biomes_tab()}};
-\item draws an occurrence map with \code{\link[=biomes_visualise]{biomes_visualise()}}.
+\item optionally builds a figure with \code{\link[=biomes_visualise]{biomes_visualise()}} (controlled
+by \code{plot}; skipped by default for speed).
 }
 }
 \examples{
@@ -81,14 +98,23 @@ selecting the top-1 layer);
 # Path 1: from a taxon name (downloads via GBIF)
 res <- biomes_full(taxon = "Fagus sylvatica", limit = 2000)
 res$table
-res$map
 
-# Path 2: from an existing data frame, pick the best layer
+# Path 2: from an existing data frame, pick the best scheme
 data("biomes_example")
-res <- biomes_full(x = biomes_example, layer = "best")
+res <- biomes_full(x = biomes_example, scheme = "best")
 
-# Path 2 with a fixed layer
-res <- biomes_full(x = biomes_example, layer = 1)
+# Path 2 with a fixed scheme
+res <- biomes_full(x = biomes_example, scheme = 1)
+
+# Path 2, best-fitting scheme within the vegetation group,
+# and build the full figure
+res <- biomes_full(x = biomes_example, scheme = "vegetation", plot = "all")
+res$plot
+
+# individual panels (no a-c letters) in $rank / $map / $barplot
+res <- biomes_full(x = biomes_example, plot = c("map", "barplot"))
+res$map
+res$barplot
 }
 
 }

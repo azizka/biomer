@@ -14,8 +14,8 @@ columns from \code{\link[=biomes_classify]{biomes_classify()}}; \code{"ID"} tabu
 columns.}
 }
 \value{
-A data frame with columns \code{layer}, \code{biome}, and \code{n} (the number
-of occurrence records in that biome on that layer).
+A data frame with columns \code{scheme}, \code{biome}, and \code{n} (the number
+of occurrence records in that biome class on that scheme).
 }
 \description{
 Summarizes the number of \strong{occurrence records} (one row of \code{x} =

@@ -1,0 +1,104 @@
+---
+title: "Step 2: Choosing a biome scheme"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Step 2: Choosing a biome scheme}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+Sys.setenv(OPENBLAS_NUM_THREADS = "1")
+Sys.setenv(OMP_NUM_THREADS      = "1")
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+library(biomes)
+data(biomes_example)
+
+run_raster <- isTRUE(as.logical(Sys.getenv("NOT_CRAN", "false")))
+if (run_raster) {
+  run_raster <- tryCatch({ biomes_download(quiet = TRUE); TRUE },
+                         error = function(e) FALSE)
+}
+```
+
+# Goal
+
+[Step 1](step1-occurrence-records-and-biome-schemes.html) gave us occurrence records and
+the 31 biome schemes. With 31 schemes to choose from, this step picks the one that
+best fits *your* data, so the choice is explicit and reproducible rather than
+defaulting to a familiar scheme.
+
+> **Terms.** A **biome scheme** is one of the 31 classification systems; a **biome
+> class** is a category within it; a **biome scheme number** (1-31) identifies a
+> scheme. The `scheme_type` argument groups schemes by methodology.
+
+---
+
+# 1. Rank the schemes for your data
+
+`biomes_rank()` scores every scheme for your occurrences and proposes a single
+best-fitting scheme. Each scheme is rated on three complementary, data-driven
+criteria:
+
+- **coverage**: share of records that fall on a defined biome class.
+- **effective number of classes**: `exp(H')`, the effective number of biome classes
+  the records occupy (rewards schemes that spread the data over several
+  well-populated classes).
+- **granularity**: occupied biome classes divided by the total number of biome
+  classes in the scheme.
+
+The three criteria are min-max scaled to `[0, 1]` and averaged (equal weights) into a
+**composite score**. The best-scoring scheme is returned in
+`attr(ranking, "best_scheme")`.
+
+```{r, eval = run_raster}
+ranking <- biomes_rank(biomes_example, verbose = FALSE)
+best    <- attr(ranking, "best_scheme")
+best
+head(ranking)
+```
+
+The result is a data frame with one row per scheme; the key columns are `scheme`
+(the biome scheme number), `scheme_name`, `composite_score` and `is_best`.
+
+### Rank within a conceptually comparable group
+
+Comparing schemes of different methodologies can mislead, so restrict the ranking to
+one group with `scheme_type`:
+
+```{r, eval = run_raster}
+r_veg <- biomes_rank(biomes_example, scheme_type = "vegetation", verbose = FALSE)
+attr(r_veg, "best_scheme")
+
+table(biomes_information$scheme_type)   # how many schemes per group
+```
+
+`scheme_type = "all"` (the default) ranks all 31 schemes. Other groups are
+`"climate"`, `"vegetation"`, `"land_cover"`, `"ecoregion"`, `"integrative"` and
+`"anthropogenic"`.
+
+---
+
+# 2. Inspect the ranking
+
+The `rank` panel of `biomes_visualise()` shows the composite score per scheme with
+the best scheme highlighted:
+
+```{r, eval = run_raster && requireNamespace("ggplot2", quietly = TRUE), fig.width = 7, fig.height = 5}
+biomes_visualise(biomes_example, panels = "rank")
+```
+
+Treat the ranking as a **shortlist**, not an authoritative answer: the most suitable
+scheme ultimately depends on your research question. Inspect the criterion-specific
+columns of the ranking and use `biomes_info()` to pick the scheme whose concept and
+resolution match your data.
+
+The integer in `attr(ranking, "best_scheme")` is exactly the biome scheme number you
+pass as `scheme` to the classification and visualisation functions next.
+
+---
+
+# Next
+
+You have a chosen biome scheme. Continue with
+[Step 3: Occurrences-to-biome classification](step3-occurrence-to-biome-classification.html).

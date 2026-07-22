@@ -394,8 +394,8 @@ biomes_occ <- function(
 .prompt_use_search <- function(n_avail) {
   choice <- utils::menu(
     choices = c(
-      "Yes  (occ_download() -- login data needed)",
-      "No   (occ_search()   -- no login, but records max. 100,000)"
+      "Yes  (occ_download(): login data needed)",
+      "No   (occ_search(): no login, but records max. 100,000)"
     ),
     title = sprintf("Download all %d records?", n_avail)
   )

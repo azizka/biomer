@@ -6,13 +6,13 @@
 #'
 #' @param x A data frame (with longitude and latitude columns), an `sf`
 #'   spatial object, or a `terra::SpatVector` of point geometries.
-#' @param layer Integer vector in `1:31` selecting one or more layers
-#'   from the packaged biome stack (e.g. `layer = 1` or
-#'   `layer = c(1, 25)`). Ignored when `biome` is supplied. Defaults to
-#'   `NULL`, meaning *all* 31 layers.
+#' @param scheme Integer vector in `1:31` selecting one or more biome
+#'   schemes (biome scheme numbers) from the packaged stack (e.g.
+#'   `scheme = 1` or `scheme = c(1, 25)`). Ignored when `biome` is
+#'   supplied. Defaults to `NULL`, meaning *all* 31 schemes.
 #' @param biome Optional `terra::SpatRaster` with one or more biome
-#'   layers. Use this for custom rasters; for the packaged stack prefer
-#'   `layer = <int>`.
+#'   schemes. Use this for custom rasters; for the packaged stack prefer
+#'   `scheme = <int>`.
 #' @param lon Column name of longitude in `x` (only used if `x` is a
 #'   non-spatial data frame). Default: "decimalLongitude".
 #' @param lat Column name of latitude in `x` (only used if `x` is a
@@ -51,14 +51,14 @@
 #' # Default: classify against all 31 layers and append the result to x
 #' biomes_classify(biomes_example)
 #'
-#' # Single layer, both raster value and biome name
-#' biomes_classify(biomes_example, layer = 1, value = "both")
+#' # Single scheme, both raster value and biome name
+#' biomes_classify(biomes_example, scheme = 1, value = "both")
 #'
-#' # Multiple layers
-#' biomes_classify(biomes_example, layer = c(1, 25))
+#' # Multiple schemes
+#' biomes_classify(biomes_example, scheme = c(1, 25))
 #'
 #' # Return only the classification columns (old default behaviour)
-#' biomes_classify(biomes_example, layer = 1, append = FALSE)
+#' biomes_classify(biomes_example, scheme = 1, append = FALSE)
 #' }
 #'
 #' @importFrom terra nlyr rast sources
@@ -66,7 +66,7 @@
 #' @export
 biomes_classify <- function(
     x,
-    layer = NULL,
+    scheme = NULL,
     biome = NULL,
     lon = "decimalLongitude",
     lat = "decimalLatitude",
@@ -93,12 +93,12 @@ biomes_classify <- function(
   if (!is.null(biome)) {
     checkmate::assert_class(biome, "SpatRaster")
   }
-  if (!is.null(layer)) {
-    checkmate::assert_integerish(layer, lower = 1L, upper = 31L,
+  if (!is.null(scheme)) {
+    checkmate::assert_integerish(scheme, lower = 1L, upper = 31L,
                                  any.missing = FALSE, min.len = 1L,
-                                 .var.name = "layer")
+                                 .var.name = "scheme")
     if (!is.null(biome)) {
-      warning("`layer` is ignored because `biome` was supplied.",
+      warning("`scheme` is ignored because `biome` was supplied.",
               call. = FALSE)
     }
   }
@@ -119,19 +119,19 @@ biomes_classify <- function(
 
   # Resolve biome raster:
   #   1) explicit SpatRaster in `biome`              -> use as-is
-  #   2) integer index/indices in `layer`            -> subset of the default
+  #   2) integer index/indices in `scheme`           -> subset of the default
   #   3) custom raster_file path or SpatRaster       -> load that
   #   4) nothing -> packaged 31-layer default stack
   if (is.null(biome)) {
     if (is.null(raster_file)) {
-      if (is.null(layer)) {
-        message("no biome file or layer provided using default biomes")
+      if (is.null(scheme)) {
+        message("no biome file or scheme provided using default biomes")
       }
       raster_file <- biomes_raster_path()
     }
     biome <- terra::rast(raster_file)
-    if (!is.null(layer)) {
-      biome <- biome[[as.integer(layer)]]
+    if (!is.null(scheme)) {
+      biome <- biome[[as.integer(scheme)]]
     }
   }
 

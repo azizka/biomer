@@ -7,11 +7,11 @@
 biomes_info(x = NULL)
 }
 \arguments{
-\item{x}{Integer vector of layer indices between 1 and 31. If \code{NULL}
-(the default), information for all 31 classifications is printed.}
+\item{x}{Integer vector of biome scheme numbers between 1 and 31. If
+\code{NULL} (the default), information for all 31 schemes is printed.}
 }
 \value{
-Invisibly returns the integer vector of layer indices that
+Invisibly returns the integer vector of biome scheme numbers that
 was printed. The function is called for its side effect of printing
 to the console.
 }
@@ -19,14 +19,15 @@ to the console.
 Prints a human-readable summary of the biome classifications shipped
 with the package. For each requested classification the function prints
 the publication, the criteria and methodology used to define the
-classes, a short description, the number of classes, the raster layer
-index, and a list of biome names with their raster values.
+classes, a short description, the number of biome classes, the biome
+scheme number, and a list of biome-class names with their raster values.
 }
 \details{
 This is the \emph{interactive} sibling of the \code{biomes_information} data set:
 use \code{\link{biomes_information}} when you want the raw metadata table (e.g.
 to subset, filter, or join programmatically), and \code{biomes_info()} when
-you want a quick read of the most relevant fields for a specific layer.
+you want a quick read of the most relevant fields for a specific
+biome scheme.
 }
 \examples{
 # Print information for all biome definitions

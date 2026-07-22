@@ -1,0 +1,122 @@
+---
+title: "Step 1: Assembling occurrence records and biome schemes"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Step 1: Assembling occurrence records and biome schemes}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+# Cap BLAS / OpenMP threads to 1 for the vignette build (avoids a
+# non-deterministic OpenBLAS allocation error on Windows with R >= 4.6 during
+# the raster extracts behind biomes_classify() / biomes_rank()).
+Sys.setenv(OPENBLAS_NUM_THREADS = "1")
+Sys.setenv(OMP_NUM_THREADS      = "1")
+
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+library(biomes)
+data(biomes_example)
+
+# Chunks that need the ~36 MB biome raster run only when it can be fetched
+# without burdening CRAN.
+run_raster <- isTRUE(as.logical(Sys.getenv("NOT_CRAN", "false")))
+if (run_raster) {
+  run_raster <- tryCatch({ biomes_download(quiet = TRUE); TRUE },
+                         error = function(e) FALSE)
+}
+```
+
+# The four-step biomes workflow
+
+`biomes` follows a four-step workflow, mirrored by these four vignettes and by
+Figure 1 of the companion paper:
+
+1. **Assembling occurrence records and biome schemes** *(this vignette)*.
+2. [Choosing a biome scheme](step2-choosing-a-biome-scheme.html).
+3. [Occurrences-to-biome classification](step3-occurrence-to-biome-classification.html).
+4. [Output and visualisation](step4-output-and-visualisation.html).
+
+Throughout, we use the packaged example dataset `biomes_example` so you can run
+everything without a download.
+
+> **Terms.** A **biome scheme** is one of the 31 published classification systems.
+> A **biome class** is a category within a scheme (e.g. *savanna*). A **biome scheme
+> number** (1-31) identifies a scheme; it is the value you pass to the `scheme`
+> argument of the classification and visualisation functions.
+
+---
+
+# 1. Occurrence records
+
+Every downstream function works on a **table of occurrence records**, one row per
+record, with a **longitude** and a **latitude** column in **decimal degrees,
+WGS84 (EPSG:4326)**. You may also pass an `sf` object or a `terra::SpatVector`.
+
+| Column | Required | Notes |
+|--------|----------|-------|
+| longitude | yes | numeric, decimal degrees, WGS84. Default name `decimalLongitude`. |
+| latitude  | yes | numeric, decimal degrees, WGS84. Default name `decimalLatitude`. |
+| `species` | for species counts | needed only to count species per biome class (Step 4). |
+| anything else | no | carried through untouched. |
+
+If your columns are named differently, pass their names via `lon` and `lat`:
+
+```{r, eval = FALSE}
+biomes_rank(occ, lon = "decimallongitude", lat = "decimallatitude")
+```
+
+The packaged example set:
+
+```{r}
+data(biomes_example)
+nrow(biomes_example)
+head(biomes_example)
+```
+
+If you do not already have a dataset, `biomes_occ()` can download and clean one from
+GBIF for a taxon (needs the `rgbif` / `CoordinateCleaner` packages and a network
+connection):
+
+```{r, eval = FALSE}
+occ <- biomes_occ(taxon = "Fagus sylvatica")
+```
+
+---
+
+# 2. The 31 biome schemes
+
+`biomes_get()` returns the packaged raster stack: 31 biome schemes at 10 × 10 km,
+globally.
+
+```{r, eval = run_raster}
+schemes <- biomes_get()
+schemes
+```
+
+Each layer of the stack matches one row of `biomes_information`, in the same order.
+Use it (or the human-readable `biomes_info()`) to see which publication and
+methodology a scheme comes from:
+
+```{r}
+data(biomes_information)
+biomes_information[25, c("publication", "name_of_classification",
+                         "scheme_type", "scheme_number")]
+
+biomes_info(25)   # readable summary for biome scheme no. 25
+```
+
+> **Scheme numbering.** Biome scheme numbers follow the order of the biome inventory
+> of Fischer et al. (2022), i.e. the alphabetical order of the 31 schemes' original
+> publications. Scheme no. 25, for example, is the vegetation scheme of Ramankutty
+> & Foley (1999).
+
+The class-level lookup (raster value → biome-class name, per scheme) lives in
+`biomes_legend`; the classification and visualisation functions use it internally.
+
+---
+
+# Next
+
+You now have (a) occurrence records and (b) the 31 biome schemes and their metadata.
+Continue with [Step 2: Choosing a biome scheme](step2-choosing-a-biome-scheme.html).

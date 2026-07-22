@@ -11,8 +11,8 @@ A data frame with 31 rows and 12 columns:
 \item{name_of_classification}{Full name of the classification scheme.}
 \item{criteria_for_class_assignment}{Criteria used to assign biome classes.}
 \item{methodology}{Methodology used to derive the biome classification.}
-\item{layer_in_raster_stack}{Index of the corresponding layer in the
-raster stack returned by \code{\link[=biomes_get]{biomes_get()}}.}
+\item{scheme_number}{Biome scheme number (1-31); index of the
+corresponding layer in the raster stack returned by \code{\link[=biomes_get]{biomes_get()}}.}
 \item{background_and_specifications}{Free-text background information
 about the classification scheme.}
 \item{number_of_classes_zonal_azonal}{Total number of biome classes
