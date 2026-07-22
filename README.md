@@ -1,14 +1,11 @@
-# biomes
+# *biomes*: An R package for reproducibly classifying occurrence records using 31 global biome schemes
 
 <!-- badges: start -->
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
 <!-- badges: end -->
 
-**An R package for reproducibly classifying occurrence records using 31 global biome
-schemes.**
-
-**biomes** ships spatially explicit raster layers of **31 published global terrestrial
+*biomes* ships spatially explicit raster layers of **31 published global terrestrial
 biome schemes** (compiled by Fischer et al. 2022) in one harmonised format, at a native
 **10 × 10 km** resolution, together with functions to classify occurrence records into
 biome classes and to choose the most suitable scheme for a dataset in a transparent,
@@ -68,16 +65,24 @@ library(biomes)
 
 data(biomes_example)
 
-res <- biomes_full(x = biomes_example, plot = "all")   # scheme = "best"
+# from an occurrence dataset:
+res <- biomes_full(x = biomes_example)   # scheme = "best"; no figure by default
 
 res            # short summary
 res$scheme     # the chosen biome scheme number
 res$table      # occurrence records per biome class
-res$plot       # the combined figure (only when plot = "all")
 
-# individual panels, e.g. to save each on its own:
+# add a figure with `plot`; the combined figure is returned in res$plot:
+res <- biomes_full(x = biomes_example, plot = "all")
+res$plot
+ggplot2::ggsave("biomes_figure.png", res$plot, width = 9, height = 12, dpi = 300)
+
+# the panels individually (no a/b/c letters) in res$rank / res$map / res$barplot:
 res <- biomes_full(x = biomes_example, plot = c("rank", "map", "barplot"))
 res$rank; res$map; res$barplot
+
+# from a taxon name instead of a dataset (downloads from GBIF), e.g. a whole order:
+res <- biomes_full(taxon = "Fagales", plot = "all")
 ```
 
 To force a specific scheme, pass its biome scheme number; to rank within one methodological
@@ -88,15 +93,23 @@ biomes_full(x = biomes_example, scheme = 1)            # fixed scheme
 biomes_full(x = biomes_example, scheme = "vegetation") # best vegetation scheme
 ```
 
-The same pipeline as individual building blocks:
+The same pipeline as individual building blocks, following the four workflow steps:
 
 ```r
-ranking <- biomes_rank(biomes_example, verbose = FALSE)
-best    <- attr(ranking, "best_scheme")
+# Step 1: Assembling occurrence records and biome schemes
+data(biomes_example)
+schemes <- biomes_get()
 
-classified <- biomes_classify(biomes_example, scheme = best)
-biomes_tab(classified)
-biomes_visualise(biomes_example, scheme = best)   # rank + map + barplot
+# Step 2: Choose a biome scheme
+ranking <- biomes_rank(biomes_example, scheme_type = "vegetation")
+best <- attr(ranking, "best_scheme")
+
+# Step 3: Occurrences-to-biome classification
+cls <- biomes_classify(biomes_example, scheme = best)
+
+# Step 4: Output & visualisation
+biomes_tab(cls)
+biomes_visualise(biomes_example, scheme = best)
 ```
 
 `biomes_visualise()` draws up to three panels (`rank`, `map` and `barplot`) combined into
@@ -106,13 +119,8 @@ one figure; select any subset with `panels`, e.g. `panels = "map"`.
 
 ## Vignettes: one per workflow step
 
-See the [package website](https://azizka.github.io/biomes/), or open the vignettes
-locally with `browseVignettes("biomes")`:
-
-1. Step 1: Assembling occurrence records and biome schemes
-2. Step 2: Choosing a biome scheme
-3. Step 3: Occurrences-to-biome classification
-4. Step 4: Output and visualisation
+Read them on the [package website](https://azizka.github.io/biomes/articles/), or open
+them locally with `browseVignettes("biomes")`.
 
 ---
 

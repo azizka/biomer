@@ -3,7 +3,9 @@ Title: Reproducibly Classify Occurrence Records Using 31 Global Biome Schemes
 Version: 0.9.3
 Authors@R:
     c(person("Hans Christian", "Groß", email = "hc.gross@gmx.de", role = c("cre", "aut")),
-        person("Alexander", "Zizka", email = "alexander.zizka@biologie.uni-marburg.de", role = c("aut", "fnd")))
+        person("Alexander", "Zizka", email = "alexander.zizka@biologie.uni-marburg.de", role = c("aut", "fnd")),
+        person("Anna", "Walentowitz", role = "aut"),
+        person("Jan-Christopher", "Fischer", role = "aut"))
 Description: Reproducibly classifies occurrence records into biome classes using
  31 published global terrestrial biome schemes compiled by Fischer and colleagues
  (2022) <doi:10.1111/geb.13574>, provided as harmonised raster layers at 10x10 km
