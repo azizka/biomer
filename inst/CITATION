@@ -5,7 +5,7 @@ citHeader(
 
 bibentry(
   bibtype = "Manual",
-  title   = "{biomes}: Reproducibly Classify Occurrence Records Using 31 Global Biome Schemes",
+  title   = "{biomes}: An R package for reproducibly classifying occurrence records using 31 global biome schemes",
   author  = c(person("Hans Christian", "Groß"),
               person("Alexander", "Zizka"),
               person("Anna", "Walentowitz"),
@@ -15,7 +15,7 @@ bibentry(
   url     = "https://azizka.github.io/biomes/",
   textVersion = paste0(
     "Groß HC, Zizka A, Walentowitz A, Fischer J-C (2026). ",
-    "biomes: Reproducibly Classify Occurrence Records Using 31 Global Biome Schemes. ",
+    "biomes: An R package for reproducibly classifying occurrence records using 31 global biome schemes. ",
     "R package version ", meta$Version, ". https://azizka.github.io/biomes/"
   )
 )
