@@ -8,8 +8,8 @@ harmonised raster layers at 10x10 km resolution globally. Includes
 functions to choose the most suitable biome scheme for a dataset by a
 data-driven ranking, to classify occurrence records, and to tabulate and
 visualise the result. Works with user-provided occurrences or a taxon
-name, in which case occurrences are downloaded from www.gbif.org and
-cleaned automatically.
+name, in which case occurrences are downloaded from GBIF
+(<https://www.gbif.org>) and cleaned automatically.
 
 ## See also
 

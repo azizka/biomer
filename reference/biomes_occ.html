@@ -11,7 +11,7 @@ CoordinateCleaner::clean_coordinates()."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">biomes</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -103,8 +103,9 @@ prompt). If <code>NULL</code>, the user is asked at the console.</p></dd>
 <dt id="arg-save-dir">save_dir<a class="anchor" aria-label="anchor" href="#arg-save-dir"></a></dt>
 <dd><p>Directory used for outputs when <code>occ_download()</code> is
 triggered (both the data CSV and a <code>*_citation.txt</code>). If <code>NULL</code>
-(default), the user is asked at the console; an empty answer falls
-back to the current working directory.</p></dd>
+(default), the user is asked at the console; an empty answer and
+non-interactive sessions fall back to the session's temporary
+directory (<code><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir()</a></code>).</p></dd>
 
 
 <dt id="arg-filter-clean">filter_clean<a class="anchor" aria-label="anchor" href="#arg-filter-clean"></a></dt>
@@ -181,7 +182,7 @@ downloaded data and the GBIF citation are written to <code>save_dir</code>.</p>
 <span class="r-in"><span>  username     <span class="op">=</span> <span class="st">"xxx"</span>,</span></span>
 <span class="r-in"><span>  pwd          <span class="op">=</span> <span class="st">"xxx"</span>,</span></span>
 <span class="r-in"><span>  email        <span class="op">=</span> <span class="st">"you@example.org"</span>,</span></span>
-<span class="r-in"><span>  save_dir     <span class="op">=</span> <span class="st">"data/GBIF"</span></span></span>
+<span class="r-in"><span>  save_dir     <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"GBIF"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>

@@ -13,7 +13,7 @@ one composite_score, which drives the ranking.'></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">biomes</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -131,6 +131,22 @@ resolves any remaining ties, and ranks are strict 1..N. With
 <dd><p>Logical. Print progress messages? Default <code>TRUE</code>.</p></dd>
 
 </dl></div>
+    <div class="section level2">
+    <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
+    <p>A data frame of classes <code>biomes_rank</code> and <code>data.frame</code>, with
+one row per compared biome scheme. Columns: <code>scheme</code> (the biome
+scheme number, 1-31), <code>scheme_name</code>, <code>year</code> (publication year of
+the scheme), <code>n_total</code>, <code>n_hit</code> and <code>n_na</code> (number of records in
+total, classified, and unclassified), <code>pct_na</code> (percentage of
+unclassified records), then one <code>*_raw</code> and one <code>*_scaled</code> column
+per requested criterion (the raw score and its min-max scaled
+version), <code>composite_score</code> (mean of the scaled criteria, drives
+the ranking), <code>rank</code> (1 = best), and <code>is_best</code> (<code>TRUE</code> for the
+top-ranked scheme). The result carries the attributes <code>criteria</code>,
+<code>tiebreaker</code>, <code>scheme_type</code>, and <code>best_scheme</code> (the biome scheme
+number of the top-ranked scheme, ready to be used as the <code>scheme</code>
+argument of <code><a href="biomes_classify.html">biomes_classify()</a></code> or <code><a href="biomes_full.html">biomes_full()</a></code>).</p>
+    </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>By default, three equally weighted criteria are used:</p><ol><li><p><strong>coverage</strong>: fraction of records that the layer places in

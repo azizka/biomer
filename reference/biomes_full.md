@@ -149,13 +149,19 @@ Once occurrences are available the function:
 
 ``` r
 if (FALSE) { # \dontrun{
-# Path 1: from a taxon name (downloads via GBIF)
+# Path 1: from a taxon name. Queries the GBIF web service and may
+# prompt for the download workflow (GBIF credentials), so it is not
+# run here.
 res <- biomes_full(taxon = "Fagus sylvatica", limit = 2000)
 res$table
+} # }
 
-# Path 2: from an existing data frame, pick the best scheme
+# \donttest{
+# Path 2: from an existing data frame, pick the best scheme.
+# Uses the biome raster (~36 MB), downloaded on first use.
 data("biomes_example")
 res <- biomes_full(x = biomes_example, scheme = "best")
+#> biomes_full(): best scheme = 16 (Anthropogenic transformation of the biomes, 1700 to 2000)
 
 # Path 2 with a fixed scheme
 res <- biomes_full(x = biomes_example, scheme = 1)
@@ -163,11 +169,18 @@ res <- biomes_full(x = biomes_example, scheme = 1)
 # Path 2, best-fitting scheme within the vegetation group,
 # and build the full figure
 res <- biomes_full(x = biomes_example, scheme = "vegetation", plot = "all")
+#> biomes_full(): best scheme = 9 (Defining functional biomes and monitoring their change globally)
+#> <SpatRaster> resampled to 5e+05 cells.
 res$plot
+
 
 # individual panels (no a-c letters) in $rank / $map / $barplot
 res <- biomes_full(x = biomes_example, plot = c("map", "barplot"))
+#> biomes_full(): best scheme = 16 (Anthropogenic transformation of the biomes, 1700 to 2000)
+#> <SpatRaster> resampled to 5e+05 cells.
 res$map
+
 res$barplot
-} # }
+
+# }
 ```

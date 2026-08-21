@@ -1,4 +1,4 @@
-# *biomes*: An R package for reproducibly classifying occurrence records using 31 global biome schemes
+# *biomes*: An R package for reproducible occurrence-to-biome classification using 31 global biome schemes
 
 *biomes* ships spatially explicit raster layers of **31 published global
 terrestrial biome schemes** (compiled by Fischer et al. 2022) in one
@@ -139,8 +139,8 @@ locally with `browseVignettes("biomes")`.
 Please cite both:
 
 1.  Groß HC, Zizka A, Walentowitz A, Fischer J-C (2026): *biomes*: An R
-    package for reproducibly classifying occurrence records using 31
-    global biome schemes. R package version 0.9.3.
+    package for reproducible occurrence-to-biome classification using 31
+    global biome schemes. R package version 0.9.4.
     <https://azizka.github.io/biomes/>
 2.  Fischer J-C, Walentowitz A, Beierkuhnlein C (2022): The biome
     inventory – Standardizing global biogeographical land units. Global

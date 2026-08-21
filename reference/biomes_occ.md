@@ -57,8 +57,9 @@ biomes_occ(
 
   Directory used for outputs when `occ_download()` is triggered (both
   the data CSV and a `*_citation.txt`). If `NULL` (default), the user is
-  asked at the console; an empty answer falls back to the current
-  working directory.
+  asked at the console; an empty answer and non-interactive sessions
+  fall back to the session's temporary directory
+  ([`tempdir()`](https://rdrr.io/r/base/tempfile.html)).
 
 - filter_clean:
 
@@ -141,7 +142,7 @@ occ <- biomes_occ(
   username     = "xxx",
   pwd          = "xxx",
   email        = "you@example.org",
-  save_dir     = "data/GBIF"
+  save_dir     = file.path(tempdir(), "GBIF")
 )
 } # }
 ```

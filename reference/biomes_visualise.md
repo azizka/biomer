@@ -124,16 +124,22 @@ b, c) are assigned in drawing order, so selecting only `rank` and
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
 data("biomes_example")
 # full figure (rank + map + barplot), best scheme chosen automatically
 biomes_visualise(biomes_example)
+#> <SpatRaster> resampled to 5e+05 cells.
+
 
 # only the map, for a fixed scheme
 biomes_visualise(biomes_example, scheme = 1, panels = "map")
+#> <SpatRaster> resampled to 5e+05 cells.
+
 
 # map + barplot for the best vegetation scheme
 biomes_visualise(biomes_example, scheme_type = "vegetation",
                  panels = c("map", "barplot"))
-} # }
+#> <SpatRaster> resampled to 5e+05 cells.
+
+# }
 ```

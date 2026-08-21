@@ -16,14 +16,15 @@ Source:
 [`inst/CITATION`](https://github.com/azizka/biomes/blob/main/inst/CITATION)
 
 Groß HC, Zizka A, Walentowitz A, Fischer J-C (2026). biomes: An R
-package for reproducibly classifying occurrence records using 31 global
-biome schemes. R package version 0.9.3. https://azizka.github.io/biomes/
+package for reproducible occurrence-to-biome classification using 31
+global biome schemes. R package version 0.9.4.
+https://azizka.github.io/biomes/
 
     @Manual{,
-      title = {{biomes}: An R package for reproducibly classifying occurrence records using 31 global biome schemes},
+      title = {{biomes}: An R package for reproducible occurrence-to-biome classification using 31 global biome schemes},
       author = {Hans Christian Groß and Alexander Zizka and Anna Walentowitz and Jan-Christopher Fischer},
       year = {2026},
-      note = {R package version 0.9.3},
+      note = {R package version 0.9.4},
       url = {https://azizka.github.io/biomes/},
     }
 
