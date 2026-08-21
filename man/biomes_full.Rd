@@ -95,11 +95,16 @@ by \code{plot}; skipped by default for speed).
 }
 \examples{
 \dontrun{
-# Path 1: from a taxon name (downloads via GBIF)
+# Path 1: from a taxon name. Queries the GBIF web service and may
+# prompt for the download workflow (GBIF credentials), so it is not
+# run here.
 res <- biomes_full(taxon = "Fagus sylvatica", limit = 2000)
 res$table
+}
 
-# Path 2: from an existing data frame, pick the best scheme
+\donttest{
+# Path 2: from an existing data frame, pick the best scheme.
+# Uses the biome raster (~36 MB), downloaded on first use.
 data("biomes_example")
 res <- biomes_full(x = biomes_example, scheme = "best")
 

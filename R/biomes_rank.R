@@ -72,6 +72,20 @@
 #'   `"none"` multiple layers may carry `is_best = TRUE`.
 #' @param verbose Logical. Print progress messages? Default `TRUE`.
 #'
+#' @return A data frame of classes `biomes_rank` and `data.frame`, with
+#'   one row per compared biome scheme. Columns: `scheme` (the biome
+#'   scheme number, 1-31), `scheme_name`, `year` (publication year of
+#'   the scheme), `n_total`, `n_hit` and `n_na` (number of records in
+#'   total, classified, and unclassified), `pct_na` (percentage of
+#'   unclassified records), then one `*_raw` and one `*_scaled` column
+#'   per requested criterion (the raw score and its min-max scaled
+#'   version), `composite_score` (mean of the scaled criteria, drives
+#'   the ranking), `rank` (1 = best), and `is_best` (`TRUE` for the
+#'   top-ranked scheme). The result carries the attributes `criteria`,
+#'   `tiebreaker`, `scheme_type`, and `best_scheme` (the biome scheme
+#'   number of the top-ranked scheme, ready to be used as the `scheme`
+#'   argument of [biomes_classify()] or [biomes_full()]).
+#'
 #' @examples
 #' data("biomes_example")
 #'

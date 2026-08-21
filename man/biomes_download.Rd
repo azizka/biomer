@@ -4,31 +4,55 @@
 \alias{biomes_download}
 \title{Download the packaged biome raster stack}
 \usage{
-biomes_download(overwrite = FALSE, quiet = FALSE)
+biomes_download(path = NULL, overwrite = FALSE, quiet = FALSE)
 }
 \arguments{
+\item{path}{Optional character string: directory in which to store
+the raster. Default \code{NULL}: use the persistent per-user cache
+directory if the user has agreed to it, otherwise \code{\link[=tempdir]{tempdir()}}
+(see Details).}
+
 \item{overwrite}{Logical flag; if \code{TRUE}, re-download the raster even
-when a cached copy already exists. Defaults to \code{FALSE}.}
+when a local copy already exists. Defaults to \code{FALSE}.}
 
 \item{quiet}{Logical flag; if \code{TRUE}, suppress the informational
 message and the download progress bar. Defaults to \code{FALSE}.}
 }
 \value{
-The local file path to the cached raster, invisibly.
+The local file path to the raster, invisibly.
 }
 \description{
 The 31-layer biome raster stack (\code{Biomes_Inventory_RasterStack.tif},
 ~36 MB) is too large to ship inside the package on CRAN. It is hosted
 as a release asset on GitHub instead. \code{biomes_download()} fetches it
-once into a persistent, per-user cache directory (see
-\code{\link[tools:R_user_dir]{tools::R_user_dir()}}); every later call - and every internal use by
-\code{\link[=biomes_get]{biomes_get()}} or \code{\link[=biomes_classify]{biomes_classify()}} - reuses the cached copy, so the
-download happens only the first time.
+once and reuses the local copy on every later call, including every
+internal use by \code{\link[=biomes_get]{biomes_get()}} or \code{\link[=biomes_classify]{biomes_classify()}}.
+}
+\details{
+The storage location is chosen as follows:
+\itemize{
+\item If \code{path} is supplied, the raster is written to that
+directory and no other location is touched.
+\item If \code{path} is \code{NULL} and a copy already exists in the
+persistent per-user cache directory (see \code{\link[tools:R_user_dir]{tools::R_user_dir()}}),
+that copy is reused.
+\item Otherwise, in interactive sessions, the function asks once
+for permission to store the raster in the persistent per-user
+cache directory, so that the download happens only once across
+R sessions.
+\item If permission is declined, or in non-interactive sessions,
+the raster is stored under \code{\link[=tempdir]{tempdir()}} and is removed
+automatically when the R session ends.
+}
+
+The package therefore never writes outside \code{\link[=tempdir]{tempdir()}} without the
+user's explicit consent (an interactive confirmation or an explicit
+\code{path}).
 }
 \examples{
 \donttest{
-# Downloads ~36 MB on first run, then reuses the cached copy.
-raster_path <- biomes_download()
+# Downloads ~36 MB into the session's temporary directory.
+raster_path <- biomes_download(path = tempdir())
 raster_path
 }
 

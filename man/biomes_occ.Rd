@@ -40,8 +40,9 @@ prompt). If \code{NULL}, the user is asked at the console.}
 
 \item{save_dir}{Directory used for outputs when \code{occ_download()} is
 triggered (both the data CSV and a \verb{*_citation.txt}). If \code{NULL}
-(default), the user is asked at the console; an empty answer falls
-back to the current working directory.}
+(default), the user is asked at the console; an empty answer and
+non-interactive sessions fall back to the session's temporary
+directory (\code{\link[=tempdir]{tempdir()}}).}
 
 \item{filter_clean}{Logical. If \code{TRUE}, run basic spatial cleaning on
 coordinates with \code{\link[CoordinateCleaner:clean_coordinates]{CoordinateCleaner::clean_coordinates()}}.
@@ -108,7 +109,7 @@ occ <- biomes_occ(
   username     = "xxx",
   pwd          = "xxx",
   email        = "you@example.org",
-  save_dir     = "data/GBIF"
+  save_dir     = file.path(tempdir(), "GBIF")
 )
 }
 

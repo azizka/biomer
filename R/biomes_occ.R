@@ -33,8 +33,9 @@
 #' @param email GBIF account email (same logic as `username`).
 #' @param save_dir Directory used for outputs when `occ_download()` is
 #'   triggered (both the data CSV and a `*_citation.txt`). If `NULL`
-#'   (default), the user is asked at the console; an empty answer falls
-#'   back to the current working directory.
+#'   (default), the user is asked at the console; an empty answer and
+#'   non-interactive sessions fall back to the session's temporary
+#'   directory ([tempdir()]).
 #' @param filter_clean Logical. If `TRUE`, run basic spatial cleaning on
 #'   coordinates with [CoordinateCleaner::clean_coordinates()].
 #'   Default: `TRUE`.
@@ -72,7 +73,7 @@
 #'   username     = "xxx",
 #'   pwd          = "xxx",
 #'   email        = "you@example.org",
-#'   save_dir     = "data/GBIF"
+#'   save_dir     = file.path(tempdir(), "GBIF")
 #' )
 #' }
 #'
@@ -224,7 +225,7 @@ biomes_occ <- function(
       if (interactive()) {
         save_dir <- .prompt_save_dir()
       } else {
-        save_dir <- getwd()
+        save_dir <- tempdir()
       }
     }
     save_dir <- normalizePath(save_dir, winslash = "/", mustWork = FALSE)
@@ -439,12 +440,12 @@ biomes_occ <- function(
 }
 
 
-#' Interactive prompt: save directory (default = current working dir).
+#' Interactive prompt: save directory (default = tempdir()).
 #'
 #' @keywords internal
 #' @noRd
 .prompt_save_dir <- function() {
-  default_dir <- getwd()
+  default_dir <- tempdir()
   raw <- readline(sprintf("Save directory [%s]: ", default_dir))
   raw <- trimws(raw)
   if (!nzchar(raw)) default_dir else raw

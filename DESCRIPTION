@@ -1,6 +1,6 @@
 Package: biomes
-Title: Reproducibly Classify Occurrence Records Using 31 Global Biome Schemes
-Version: 0.9.3
+Title: Reproducible Occurrence-to-Biome Classification Using 31 Global Biome Schemes
+Version: 0.9.4
 Authors@R:
     c(person("Hans Christian", "Groß", email = "hc.gross@gmx.de", role = c("cre", "aut")),
         person("Alexander", "Zizka", email = "alexander.zizka@biologie.uni-marburg.de", role = c("aut", "fnd")),
@@ -12,7 +12,8 @@ Description: Reproducibly classifies occurrence records into biome classes using
  resolution globally. Includes functions to choose the most suitable biome scheme
  for a dataset by a data-driven ranking, to classify occurrence records, and to
  tabulate and visualise the result. Works with user-provided occurrences or a
- taxon name, in which case occurrences are downloaded from www.gbif.org and
+ taxon name, in which case occurrences are downloaded from GBIF
+ (<https://www.gbif.org>) and
  cleaned automatically.
 URL: https://azizka.github.io/biomes/, https://github.com/azizka/biomes
 BugReports: https://github.com/azizka/biomes/issues

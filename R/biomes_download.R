@@ -3,35 +3,60 @@
 #' The 31-layer biome raster stack (`Biomes_Inventory_RasterStack.tif`,
 #' ~36 MB) is too large to ship inside the package on CRAN. It is hosted
 #' as a release asset on GitHub instead. `biomes_download()` fetches it
-#' once into a persistent, per-user cache directory (see
-#' [tools::R_user_dir()]); every later call - and every internal use by
-#' [biomes_get()] or [biomes_classify()] - reuses the cached copy, so the
-#' download happens only the first time.
+#' once and reuses the local copy on every later call, including every
+#' internal use by [biomes_get()] or [biomes_classify()].
 #'
+#' The storage location is chosen as follows:
+#' \itemize{
+#'   \item If `path` is supplied, the raster is written to that
+#'     directory and no other location is touched.
+#'   \item If `path` is `NULL` and a copy already exists in the
+#'     persistent per-user cache directory (see [tools::R_user_dir()]),
+#'     that copy is reused.
+#'   \item Otherwise, in interactive sessions, the function asks once
+#'     for permission to store the raster in the persistent per-user
+#'     cache directory, so that the download happens only once across
+#'     R sessions.
+#'   \item If permission is declined, or in non-interactive sessions,
+#'     the raster is stored under [tempdir()] and is removed
+#'     automatically when the R session ends.
+#' }
+#'
+#' The package therefore never writes outside [tempdir()] without the
+#' user's explicit consent (an interactive confirmation or an explicit
+#' `path`).
+#'
+#' @param path Optional character string: directory in which to store
+#'   the raster. Default `NULL`: use the persistent per-user cache
+#'   directory if the user has agreed to it, otherwise [tempdir()]
+#'   (see Details).
 #' @param overwrite Logical flag; if `TRUE`, re-download the raster even
-#'   when a cached copy already exists. Defaults to `FALSE`.
+#'   when a local copy already exists. Defaults to `FALSE`.
 #' @param quiet Logical flag; if `TRUE`, suppress the informational
 #'   message and the download progress bar. Defaults to `FALSE`.
 #'
-#' @return The local file path to the cached raster, invisibly.
+#' @return The local file path to the raster, invisibly.
 #'
 #' @seealso [biomes_get()] to load the raster as a `terra::SpatRaster`.
 #'
 #' @examples
 #' \donttest{
-#' # Downloads ~36 MB on first run, then reuses the cached copy.
-#' raster_path <- biomes_download()
+#' # Downloads ~36 MB into the session's temporary directory.
+#' raster_path <- biomes_download(path = tempdir())
 #' raster_path
 #' }
 #'
 #' @importFrom utils download.file
 #' @export
-biomes_download <- function(overwrite = FALSE, quiet = FALSE) {
+biomes_download <- function(path = NULL, overwrite = FALSE, quiet = FALSE) {
 
+  checkmate::assert_string(path, null.ok = TRUE)
   checkmate::assert_flag(overwrite)
   checkmate::assert_flag(quiet)
 
-  dest <- biomes_cache_path()
+  dir  <- if (is.null(path)) biomes_resolve_cache_dir() else path
+  dest <- file.path(dir, "Biomes_Inventory_RasterStack.tif")
+
   if (file.exists(dest) && !overwrite) {
     return(invisible(dest))
   }
@@ -39,10 +64,7 @@ biomes_download <- function(overwrite = FALSE, quiet = FALSE) {
   dir.create(dirname(dest), recursive = TRUE, showWarnings = FALSE)
 
   if (!quiet) {
-    message(
-      "Downloading biome raster stack (~36 MB) to:\n  ", dest,
-      "\nThis happens only once; the file is cached for future use."
-    )
+    message("Downloading biome raster stack (~36 MB) to:\n  ", dest)
   }
 
   # 36 MB can exceed the 60s default on a slow connection; be patient.
@@ -79,18 +101,50 @@ biomes_download <- function(overwrite = FALSE, quiet = FALSE) {
   invisible(dest)
 }
 
-# Cache directory used for downloaded package data.
+# Persistent per-user cache directory (used only with user consent).
 #' @keywords internal
 #' @noRd
 biomes_cache_dir <- function() {
   tools::R_user_dir("biomes", which = "cache")
 }
 
-# Full path to the cached raster (the file may not exist yet).
+# Full path to a raster copy in the persistent cache (may not exist).
 #' @keywords internal
 #' @noRd
 biomes_cache_path <- function() {
   file.path(biomes_cache_dir(), "Biomes_Inventory_RasterStack.tif")
+}
+
+# Full path to a raster copy in the session cache (may not exist).
+#' @keywords internal
+#' @noRd
+biomes_temp_path <- function() {
+  file.path(tempdir(), "biomes", "Biomes_Inventory_RasterStack.tif")
+}
+
+# Decide where a fresh download may be stored. The persistent per-user
+# cache is used only if a copy is already there (earlier consent) or if
+# the user agrees interactively; otherwise fall back to tempdir(), which
+# CRAN policy always allows.
+#' @keywords internal
+#' @noRd
+biomes_resolve_cache_dir <- function() {
+  if (file.exists(biomes_cache_path())) {
+    return(biomes_cache_dir())
+  }
+  if (interactive()) {
+    ans <- utils::askYesNo(
+      paste0(
+        "biomes would like to store the biome raster (~36 MB) in the\n",
+        "per-user cache directory\n  ", biomes_cache_dir(), "\n",
+        "so it is downloaded only once. Allow?"
+      )
+    )
+    if (isTRUE(ans)) {
+      return(biomes_cache_dir())
+    }
+  }
+  dirname(biomes_temp_path())
 }
 
 # Remote location of the raster (GitHub release asset). The "data-v1"
@@ -105,14 +159,16 @@ biomes_raster_url <- function() {
   )
 }
 
-# Resolve the local raster path, downloading on first use. Used by all
-# internal call sites that previously read from inst/extdata.
+# Resolve the local raster path, downloading on first use. Checks the
+# persistent per-user cache first, then the session cache.
 #' @keywords internal
 #' @noRd
 biomes_raster_path <- function() {
-  dest <- biomes_cache_path()
-  if (!file.exists(dest)) {
-    biomes_download()
+  if (file.exists(biomes_cache_path())) {
+    return(biomes_cache_path())
   }
-  dest
+  if (file.exists(biomes_temp_path())) {
+    return(biomes_temp_path())
+  }
+  biomes_download()
 }

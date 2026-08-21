@@ -4,7 +4,7 @@ template:
   bootstrap: 5
 
 home:
-  title: 'biomes: An R package for reproducibly classifying occurrence records using 31 global biome schemes'
+  title: 'biomes: An R package for reproducible occurrence-to-biome classification using 31 global biome schemes'
   description: >
     biomes provides 31 published global terrestrial biome schemes (Fischer
     et al. 2022) as harmonised raster layers at 10x10 km resolution, plus

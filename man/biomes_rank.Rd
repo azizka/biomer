@@ -58,6 +58,21 @@ resolves any remaining ties, and ranks are strict 1..N. With
 
 \item{verbose}{Logical. Print progress messages? Default \code{TRUE}.}
 }
+\value{
+A data frame of classes \code{biomes_rank} and \code{data.frame}, with
+one row per compared biome scheme. Columns: \code{scheme} (the biome
+scheme number, 1-31), \code{scheme_name}, \code{year} (publication year of
+the scheme), \code{n_total}, \code{n_hit} and \code{n_na} (number of records in
+total, classified, and unclassified), \code{pct_na} (percentage of
+unclassified records), then one \verb{*_raw} and one \verb{*_scaled} column
+per requested criterion (the raw score and its min-max scaled
+version), \code{composite_score} (mean of the scaled criteria, drives
+the ranking), \code{rank} (1 = best), and \code{is_best} (\code{TRUE} for the
+top-ranked scheme). The result carries the attributes \code{criteria},
+\code{tiebreaker}, \code{scheme_type}, and \code{best_scheme} (the biome scheme
+number of the top-ranked scheme, ready to be used as the \code{scheme}
+argument of \code{\link[=biomes_classify]{biomes_classify()}} or \code{\link[=biomes_full]{biomes_full()}}).
+}
 \description{
 Compares the biome classification layers for a user-supplied set of
 occurrences and proposes a single "best" layer for that dataset. Each

@@ -1,3 +1,29 @@
+## Resubmission
+
+This is a resubmission (0.9.4). It addresses all points raised in the
+CRAN review of 0.9.3:
+
+* DESCRIPTION: the GBIF link is now formatted for auto-linking as
+  <https://www.gbif.org>.
+* Documentation: `biomes_rank()` now documents its return value
+  (\value in biomes_rank.Rd), describing the class, every column, and
+  the attached attributes.
+* Examples: \dontrun{} was replaced with \donttest{} wherever the
+  example is executable by the user (`biomes_visualise()`, and the
+  data-frame path of `biomes_full()`). The remaining \dontrun{}
+  examples (`biomes_occ()`, and the taxon path of `biomes_full()`)
+  query the GBIF web service and require an interactive console prompt
+  and, for the download workflow, personal GBIF credentials, so they
+  cannot be executed unattended.
+* Writing to the user filespace: `biomes_download()` no longer writes
+  to a persistent location by default. The raster is stored under
+  `tempdir()` unless the user either supplies a path explicitly or
+  actively consents, via an interactive confirmation, to the per-user
+  cache directory from `tools::R_user_dir()`. `biomes_occ()` now falls
+  back to `tempdir()` (instead of the working directory) when no save
+  directory is given. Examples, vignettes, and tests only ever write
+  to `tempdir()`.
+
 ## R CMD check results
 
 This is a new submission.
@@ -47,13 +73,15 @@ The ~36 MB biome raster stack (Fischer et al. 2022,
 package, so the installed size stays well under CRAN's limit.
 
 * The stack is hosted as a release asset on the package's GitHub
-  repository and downloaded once into a per-user cache directory
-  obtained from `tools::R_user_dir("biomes", "cache")`. Subsequent
-  calls reuse the cached copy.
+  repository. By default it is downloaded to `tempdir()`; only with
+  the user's explicit consent (interactive confirmation, or an
+  explicit `path` argument) is it stored in the per-user cache
+  directory obtained from `tools::R_user_dir("biomes", "cache")`,
+  where subsequent sessions reuse it.
 * The download is triggered explicitly by `biomes_download()` and,
   transparently, on first use of `biomes_get()` / `biomes_classify()`.
-  Nothing is written outside the standard per-user cache location, and
-  the package downloads nothing at install or load time.
+  Nothing is written outside `tempdir()` without the user's consent,
+  and the package downloads nothing at install or load time.
 * Functions that require the raster fail gracefully with an
   informative message if the resource is unavailable (e.g. offline).
 * Examples that need the raster are wrapped in `\donttest{}`, tests

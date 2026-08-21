@@ -85,7 +85,7 @@ Which panels are drawn is controlled by \code{panels}; the panel letters
 \code{barplot} labels them (a) and (b).
 }
 \examples{
-\dontrun{
+\donttest{
 data("biomes_example")
 # full figure (rank + map + barplot), best scheme chosen automatically
 biomes_visualise(biomes_example)

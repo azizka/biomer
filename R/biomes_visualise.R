@@ -49,7 +49,7 @@
 #'   `combine = FALSE`. Print to display or save with [ggplot2::ggsave()].
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' data("biomes_example")
 #' # full figure (rank + map + barplot), best scheme chosen automatically
 #' biomes_visualise(biomes_example)
