@@ -1,9 +1,13 @@
 # *biomes*: An R package for reproducible occurrence-to-biome classification using 31 global biome schemes
-
 <!-- badges: start -->
-[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+[![CRAN status](https://www.r-pkg.org/badges/version/biomes)](https://CRAN.R-project.org/package=biomes)
+[![CRAN downloads](https://cranlogs.r-pkg.org/badges/grand-total/biomes)](https://CRAN.R-project.org/package=biomes)
+[![Monthly downloads](https://cranlogs.r-pkg.org/badges/biomes)](https://CRAN.R-project.org/package=biomes)
+[![Project Status: Active](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
+[![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
 <!-- badges: end -->
+
 
 *biomes* ships spatially explicit raster layers of **31 published global terrestrial
 biome schemes** (compiled by Fischer et al. 2022) in one harmonised format, at a native
