@@ -103,7 +103,7 @@ data("biomes_example")
 biomes_classify(biomes_example)
 #> no biome file or scheme provided using default biomes
 #> Downloading biome raster stack (~36 MB) to:
-#>   /tmp/Rtmpt3MgSm/biomes/Biomes_Inventory_RasterStack.tif
+#>   /tmp/Rtmpyl59cT/biomes/Biomes_Inventory_RasterStack.tif
 #> Coordinates provided as data.frame, assuming WGS84 as CRS.
 #> Classified 29104 record(s) against 31 biome layer(s):
 #>   - Biome_Inventory_layer_01 (Allen et al., 2020)
